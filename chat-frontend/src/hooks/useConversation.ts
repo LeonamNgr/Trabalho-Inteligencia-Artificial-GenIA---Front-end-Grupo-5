@@ -17,10 +17,16 @@ interface UseConversationReturn {
 
 export function useConversation(): UseConversationReturn {
   const { sessionId } = useSession();
-  const { setActiveConversation, setMessages } = useConversationContext();
+  const { activeConversation, messages, setActiveConversation, setMessages } = useConversationContext();
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const refreshFromStorage = useCallback(() => {
+    if (!sessionId) return;
+    const local = loadConversations(sessionId);
+    setConversations(local);
+  }, [sessionId]);
 
   const fetchHistory = useCallback(async () => {
     if (!sessionId) return;
@@ -80,15 +86,22 @@ export function useConversation(): UseConversationReturn {
   );
 
   const createNewConversation = useCallback(() => {
+    if (sessionId && activeConversation && messages.length > 0) {
+      saveMessages(sessionId, activeConversation.id, messages);
+    }
     setActiveConversation(null);
     setMessages([]);
-  }, [setActiveConversation, setMessages]);
+  }, [sessionId, activeConversation, messages, setActiveConversation, setMessages]);
 
   useEffect(() => {
     if (sessionId) {
       fetchHistory();
     }
   }, [sessionId, fetchHistory]);
+
+  useEffect(() => {
+    refreshFromStorage();
+  }, [activeConversation?.id, refreshFromStorage]);
 
   return {
     conversations,
