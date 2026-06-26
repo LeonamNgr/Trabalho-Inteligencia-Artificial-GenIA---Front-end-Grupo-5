@@ -1,9 +1,10 @@
-// Hook de gerenciamento do chat e envio de mensagens
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { Message } from '../types/message';
-import type { UploadResponse } from '../types/upload';
+import { useSession } from '../contexts/SessionContext';
+import { useConversationContext } from '../contexts/ConversationContext';
+import { postMessage } from '../services/chatService';
+import { isValidMessage } from '../utils/validators';
 
-<<<<<<< HEAD
 interface UseChatReturn {
   messages: Message[];
   isLoading: boolean;
@@ -58,10 +59,6 @@ export function useChat(): UseChatReturn {
           content,
         });
 
-        if (response.conversationId && !conversationId) {
-          // usar id da nova conversa se necessário
-        }
-
         addMessage(response.assistantMessage);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erro ao enviar mensagem';
@@ -92,17 +89,4 @@ export function useChat(): UseChatReturn {
     retry,
     clearMessages,
   };
-=======
-export function useChat() {
-  const [messages] = useState<Message[]>([]);
-  const [isStreaming] = useState(false);
-  const [error] = useState<string | null>(null);
-  const [activeAttachment] = useState<UploadResponse | null>(null);
-
-  const sendMessage = (_content: string) => {};
-  const cancelStream = () => {};
-  const clearAttachment = () => {};
-
-  return { messages, isStreaming, error, activeAttachment, sendMessage, cancelStream, clearAttachment };
->>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }

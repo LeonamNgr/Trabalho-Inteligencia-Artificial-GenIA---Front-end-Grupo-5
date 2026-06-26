@@ -1,9 +1,23 @@
 import type { UploadResponse } from './upload';
 
-export interface Message {
-  id: string;
+export interface ChatRequest {
+  sessionId: string;
+  conversationId: number | null;
   content: string;
-  role: 'user' | 'assistant';
+  attachmentId?: number | null;
+}
+
+export interface Message {
+  id: number;
+  conversationId: number;
+  role: 'USER' | 'ASSISTANT';
+  content: string;
   timestamp: string;
-  attachment?: UploadResponse;
+  attachment?: UploadResponse | null;
+}
+
+export interface ChatResponse {
+  userMessage: Message;
+  assistantMessage: Message;
+  conversationId: number;
 }

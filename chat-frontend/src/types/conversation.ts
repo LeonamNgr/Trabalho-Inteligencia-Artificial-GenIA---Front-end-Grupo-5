@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import type { Message } from './message';
 
 export interface Conversation {
@@ -8,11 +7,18 @@ export interface Conversation {
 
 export interface ConversationSummary {
   id: number;
-=======
-export interface Conversation {
-  id: string;
->>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
   title: string;
+  messageCount: number;
   lastMessage: string;
-  updatedAt: string;
+  lastActivity: string;
+}
+
+export interface HistoryResponse {
+  sessionId: string;
+  conversations: ConversationSummary[];
+}
+
+export interface ConversationResponse {
+  conversationId: number;
+  messages: Message[];
 }
