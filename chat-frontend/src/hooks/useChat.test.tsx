@@ -1,0 +1,106 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { useChat } from './useChat';
+import { SessionContext } from '../contexts/SessionContext';
+import { ConversationContext } from '../contexts/ConversationContext';
+
+const mockPostMessage = vi.fn();
+
+vi.mock('../services/chatService', () => ({
+  postMessage: (...args: unknown[]) => mockPostMessage(...args),
+}));
+
+vi.mock('../utils/withRetry', () => ({
+  withRetry: <T,>(fn: () => Promise<T>) => fn(),
+}));
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+function createWrapper() {
+  const sessionValue = { sessionId: 'test-session', isLoading: false, error: null, initialize: vi.fn(), destroy: vi.fn() };
+  const conversationValue = {
+    activeConversation: null,
+    messages: [],
+    setActiveConversation: vi.fn(),
+    addMessage: vi.fn(),
+    setMessages: vi.fn(),
+    clearMessages: vi.fn(),
+  };
+
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return (
+      <SessionContext.Provider value={sessionValue}>
+        <ConversationContext.Provider value={conversationValue}>
+          {children}
+        </ConversationContext.Provider>
+      </SessionContext.Provider>
+    );
+  };
+}
+
+describe('useChat', () => {
+  it('sends message and calls postMessage', async () => {
+    mockPostMessage.mockResolvedValue({ userMessage: { id: 1, conversationId: 1, role: 'USER' as const, content: 'Oi', timestamp: new Date().toISOString(), attachment: null }, assistantMessage: { id: 2, conversationId: 1, role: 'ASSISTANT' as const, content: 'Resposta', timestamp: new Date().toISOString(), attachment: null }, conversationId: 1 });
+
+    const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
+
+    await act(async () => {
+      await result.current.sendMessage('Oi');
+    });
+
+    expect(mockPostMessage).toHaveBeenCalled();
+  });
+
+  it('sets error on send failure', async () => {
+    mockPostMessage.mockRejectedValue(new Error('Erro de rede'));
+
+    const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
+
+    await act(async () => {
+      await result.current.sendMessage('Oi');
+    });
+
+    expect(result.current.error).toBe('Erro de rede');
+  });
+
+  it('does not send empty message', async () => {
+    const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
+
+    await act(async () => {
+      await result.current.sendMessage('');
+    });
+
+    expect(mockPostMessage).not.toHaveBeenCalled();
+  });
+
+  it('clears messages', () => {
+    const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
+
+    act(() => {
+      result.current.clearMessages();
+    });
+
+    expect(result.current.messages).toEqual([]);
+  });
+
+  it('retries last message', async () => {
+    mockPostMessage.mockResolvedValue({ userMessage: { id: 1, conversationId: 1, role: 'USER' as const, content: 'Oi', timestamp: new Date().toISOString(), attachment: null }, assistantMessage: { id: 2, conversationId: 1, role: 'ASSISTANT' as const, content: 'Resposta', timestamp: new Date().toISOString(), attachment: null }, conversationId: 1 });
+
+    const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
+
+    await act(async () => {
+      await result.current.sendMessage('Oi');
+    });
+
+    expect(mockPostMessage).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await result.current.retry();
+    });
+
+    expect(mockPostMessage).toHaveBeenCalledTimes(2);
+  });
+});

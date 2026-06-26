@@ -1,4 +1,29 @@
 .item {
+<<<<<<< HEAD
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.item:hover {
+  background: var(--border-color);
+}
+
+.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.title {
+  font-weight: 500;
+}
+
+.date {
+  font-size: 12px;
+  color: var(--text-secondary);
+=======
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -90,4 +115,5 @@
 .delete:hover {
   color: #d32f2f;
   background: rgba(0, 0, 0, 0.05);
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }

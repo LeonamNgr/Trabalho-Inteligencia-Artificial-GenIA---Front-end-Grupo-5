@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+.container {
+  width: 100%;
+}
+
+.bar {
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--primary-color);
+  transition: width 0.3s;
+}
+
+.text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+=======
 .progress {
   padding: 12px;
   border: 1px solid #e0e0e0;
@@ -75,4 +98,5 @@
   color: #777;
   margin-top: 6px;
   text-align: right;
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }

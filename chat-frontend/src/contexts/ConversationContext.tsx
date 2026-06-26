@@ -1,19 +1,20 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import type { Message } from '../types/message';
+import type { Conversation } from '../types/conversation';
 
 interface ConversationContextType {
-  activeConversationId: number | null;
+  activeConversation: Conversation | null;
   messages: Message[];
-  setActiveConversation: (id: number | null) => void;
+  setActiveConversation: (conversation: Conversation | null) => void;
   addMessage: (message: Message) => void;
   setMessages: (messages: Message[]) => void;
   clearMessages: () => void;
 }
 
-const ConversationContext = createContext<ConversationContextType | null>(null);
+export const ConversationContext = createContext<ConversationContextType | null>(null);
 
 export function ConversationProvider({ children }: { children: ReactNode }) {
-  const [activeConversationId, setActiveConversation] = useState<number | null>(null);
+  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const addMessage = useCallback((message: Message) => {
@@ -28,7 +29,7 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
   return (
     <ConversationContext.Provider
       value={{
-        activeConversationId,
+        activeConversation,
         messages,
         setActiveConversation,
         addMessage,

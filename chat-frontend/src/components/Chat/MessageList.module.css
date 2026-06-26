@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+.container { display: flex; flex-direction: column; gap: 8px; }
+=======
 .list {
   flex: 1;
   overflow-y: auto;
@@ -57,3 +60,4 @@
   font-style: italic;
   padding: 4px 0;
 }
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1

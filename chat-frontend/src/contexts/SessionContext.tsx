@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { SessionResponse } from '../types/session';
-import { createSession as apiCreateSession } from '../services/sessionService';
+import { createSession as apiCreateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
 import { STORAGE_KEYS } from '../utils/constants';
 
 interface SessionContextType {
@@ -11,7 +11,7 @@ interface SessionContextType {
   destroy: () => Promise<void>;
 }
 
-const SessionContext = createContext<SessionContextType | null>(null);
+export const SessionContext = createContext<SessionContextType | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionId] = useState<string | null>(() =>
@@ -44,8 +44,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const destroy = useCallback(async () => {
     if (!sessionId) return;
     try {
-      const { deleteSession } = await import('../services/sessionService');
-      await deleteSession(sessionId);
+      await apiDeleteSession(sessionId);
     } catch {
       // fallback: remove local mesmo com erro
     } finally {

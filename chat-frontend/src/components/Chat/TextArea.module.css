@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+.textarea { flex: 1; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; font-size: 14px; resize: none; outline: none; min-height: 40px; max-height: 120px; background: transparent; color: var(--text-primary); }
+.textarea:focus { border-color: var(--primary-color); }
+=======
 .textarea {
   flex: 1;
   resize: none;
@@ -28,3 +32,4 @@
   color: #999;
   cursor: not-allowed;
 }
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1

@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  overflow-y: auto;
+=======
 .history {
   display: flex;
   flex-direction: column;
@@ -65,4 +73,5 @@
   color: #d32f2f;
   font-size: 13px;
   text-align: center;
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }

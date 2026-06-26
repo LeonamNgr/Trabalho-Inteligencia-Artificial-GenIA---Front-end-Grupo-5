@@ -1,5 +1,11 @@
+<<<<<<< HEAD
+import type { Message } from '../../types/message';
+import { formatTime } from '../../utils/formatters';
+import { AttachmentBadge } from './AttachmentBadge';
+=======
 import { useMemo } from 'react';
 import type { Message } from '../../types/message';
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 import styles from './MessageItem.module.css';
 
 interface MessageItemProps {
@@ -7,6 +13,17 @@ interface MessageItemProps {
 }
 
 export function MessageItem({ message }: MessageItemProps) {
+<<<<<<< HEAD
+  const isUser = message.role === 'USER';
+
+  return (
+    <div className={`${styles.message} ${isUser ? styles.user : styles.assistant}`}>
+      <div>{message.content}</div>
+      {message.attachment && (
+        <AttachmentBadge fileName={message.attachment.fileName} />
+      )}
+      <div className={styles.timestamp}>{formatTime(message.timestamp)}</div>
+=======
   const isUser = message.role === 'user';
   const className = `${styles.item} ${isUser ? styles.itemUser : styles.itemAssistant}`;
 
@@ -31,6 +48,7 @@ export function MessageItem({ message }: MessageItemProps) {
         )}
       </div>
       <span className={styles.time}>{formattedTime}</span>
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
     </div>
   );
 }

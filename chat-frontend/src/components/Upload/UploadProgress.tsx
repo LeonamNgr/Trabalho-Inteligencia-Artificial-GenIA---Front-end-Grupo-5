@@ -1,8 +1,22 @@
+<<<<<<< HEAD
+=======
 import { useMemo } from 'react';
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 import styles from './UploadProgress.module.css';
 
 interface UploadProgressProps {
   progress: number;
+<<<<<<< HEAD
+}
+
+export function UploadProgress({ progress }: UploadProgressProps) {
+  return (
+    <div className={styles.container}>
+      <div className={styles.bar}>
+        <div className={styles.fill} style={{ width: `${progress}%` }} />
+      </div>
+      <div className={styles.text}>{progress}%</div>
+=======
   fileName: string;
   error: string | null;
   isComplete: boolean;
@@ -47,6 +61,7 @@ export function UploadProgress({ progress, fileName, error, isComplete, onReset 
       <span className={styles.percent}>
         {isComplete ? 'Concluido' : `${Math.round(progress)}%`}
       </span>
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
     </div>
   );
 }

@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+import styles from './TextArea.module.css';
+
+interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  'aria-describedby'?: string;
+}
+
+export function TextArea(props: TextAreaProps) {
+  return (
+    <textarea
+      {...props}
+      className={`${styles.textarea} ${props.className || ''}`}
+      aria-label="Mensagem"
+=======
 import { useRef, useEffect, type ChangeEvent, type KeyboardEvent } from 'react';
 import styles from './TextArea.module.css';
 
@@ -32,6 +46,7 @@ export function TextArea({ value, onChange, onKeyDown, disabled, placeholder }: 
       disabled={disabled}
       placeholder={placeholder}
       rows={1}
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
     />
   );
 }
