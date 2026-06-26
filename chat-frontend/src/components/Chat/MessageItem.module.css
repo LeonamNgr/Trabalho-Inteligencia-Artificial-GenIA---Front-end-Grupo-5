@@ -1,0 +1,5 @@
+.message { padding: 8px 12px; border-radius: 12px; max-width: 70%; word-break: break-word; animation: fadeIn 0.2s ease-in; }
+.user { align-self: flex-end; background: var(--primary-color); color: white; }
+.assistant { align-self: flex-start; background: var(--surface-color); border: 1px solid var(--border-color); }
+.timestamp { font-size: 11px; margin-top: 4px; opacity: 0.7; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
