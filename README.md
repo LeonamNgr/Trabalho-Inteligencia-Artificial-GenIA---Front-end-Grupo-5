@@ -242,25 +242,13 @@ cd chat-backend
 
 ---
 
-## 🔮 Roadmap
-
-- [x] Estrutura inicial do front-end (scaffold)
-- [x] Tipos, serviços, hooks e contextos implementados
-- [ ] Implementação dos componentes visuais
-- [ ] Implementação dos CSS Modules
-- [ ] Testes unitários
-- [ ] Back-end Spring Boot
-- [ ] Integração com LLM / IA
-
----
-
 ## 📄 Documentação
 
 Documentos detalhados na raiz do projeto:
 
-- [`SYSTEM_DOCS.md`](./SYSTEM_DOCS.md) — Contrato geral do sistema com diagramas arquiteturais
-- [`SYSTEM_DOCS_FRONTEND.md`](./SYSTEM_DOCS_FRONTEND.md) — Documentação completa do front-end
-- [`SYSTEM_DOCS_BACKEND.md`](./SYSTEM_DOCS_BACKEND.md) — Documentação completa do back-end
+
+- [`SYSTEM_DOCS_FRONTEND.md`](chat-frontend/doc/SYSTEM_DOCS_FRONTEND.md) — Documentação completa do front-end
+
 
 ---
 
