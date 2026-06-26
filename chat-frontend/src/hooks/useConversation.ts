@@ -1,8 +1,10 @@
-// Hook de gerenciamento de histórico de conversas
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import type { ConversationSummary } from '../types/conversation';
 import type { Conversation } from '../types/conversation';
+import { useSession } from '../contexts/SessionContext';
+import { useConversationContext } from '../contexts/ConversationContext';
+import { getHistory, getConversation } from '../services/chatService';
 
-<<<<<<< HEAD
 interface UseConversationReturn {
   conversations: ConversationSummary[];
   isLoading: boolean;
@@ -43,7 +45,8 @@ export function useConversation(): UseConversationReturn {
       setError(null);
       try {
         const response = await getConversation(sessionId, id);
-        setActiveConversation({ id: response.conversationId });
+        const conversation: Conversation = { id: response.conversationId };
+        setActiveConversation(conversation);
         setMessages(response.messages);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erro ao carregar conversa';
@@ -68,17 +71,4 @@ export function useConversation(): UseConversationReturn {
     selectConversation,
     createNewConversation,
   };
-=======
-export function useConversation() {
-  const [conversations] = useState<Conversation[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
-  const [isLoading] = useState(false);
-  const [error] = useState<string | null>(null);
-
-  const selectConversation = (id: string) => setActiveConversationId(id);
-  const deleteConversation = (_id: string) => {};
-  const createConversation = () => {};
-
-  return { conversations, activeConversationId, isLoading, error, selectConversation, deleteConversation, createConversation };
->>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }

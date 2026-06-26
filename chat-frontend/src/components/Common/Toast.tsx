@@ -1,16 +1,8 @@
-import { useEffect } from 'react';
 import { useToast } from '../../contexts/ToastContext';
 import styles from './Toast.module.css';
 
 export function Toast() {
   const { toasts, removeToast } = useToast();
-
-  useEffect(() => {
-    const timers = toasts.map((toast) =>
-      setTimeout(() => removeToast(toast.id), 5000),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [toasts, removeToast]);
 
   if (toasts.length === 0) return null;
 

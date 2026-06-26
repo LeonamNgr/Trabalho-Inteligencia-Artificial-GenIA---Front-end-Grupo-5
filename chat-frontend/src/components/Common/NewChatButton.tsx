@@ -1,15 +1,11 @@
-import { useConversationContext } from '../../contexts/ConversationContext';
+import { useConversation } from '../../hooks/useConversation';
 import styles from './NewChatButton.module.css';
 
 export function NewChatButton() {
-  const { setActiveConversation } = useConversationContext();
-
-  const handleClick = () => {
-    setActiveConversation(null);
-  };
+  const { createNewConversation } = useConversation();
 
   return (
-    <button className={styles.button} onClick={handleClick} type="button">
+    <button className={styles.button} onClick={createNewConversation} type="button">
       Novo Chat
     </button>
   );
