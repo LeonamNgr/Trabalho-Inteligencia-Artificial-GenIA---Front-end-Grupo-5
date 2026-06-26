@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 .container { display: flex; align-items: center; }
 .attachButton { width: 36px; height: 36px; border-radius: 50%; background: none; border: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
 .attachButton:disabled { opacity: 0.5; cursor: not-allowed; }
 .attachButton:hover:not(:disabled) { background: var(--surface-color); }
+=======
+.uploadArea {
+  position: relative;
+  width: 100%;
+}
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1

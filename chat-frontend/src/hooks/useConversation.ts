@@ -1,9 +1,8 @@
-import { useState, useCallback } from 'react';
-import type { ConversationSummary } from '../types/conversation';
-import { getHistory, getConversation } from '../services/chatService';
-import { useSession } from '../contexts/SessionContext';
-import { useConversationContext } from '../contexts/ConversationContext';
+// Hook de gerenciamento de histórico de conversas
+import { useState } from 'react';
+import type { Conversation } from '../types/conversation';
 
+<<<<<<< HEAD
 interface UseConversationReturn {
   conversations: ConversationSummary[];
   isLoading: boolean;
@@ -69,4 +68,17 @@ export function useConversation(): UseConversationReturn {
     selectConversation,
     createNewConversation,
   };
+=======
+export function useConversation() {
+  const [conversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [isLoading] = useState(false);
+  const [error] = useState<string | null>(null);
+
+  const selectConversation = (id: string) => setActiveConversationId(id);
+  const deleteConversation = (_id: string) => {};
+  const createConversation = () => {};
+
+  return { conversations, activeConversationId, isLoading, error, selectConversation, deleteConversation, createConversation };
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }

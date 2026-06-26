@@ -1,10 +1,9 @@
-import { useState, useCallback } from 'react';
+// Hook de gerenciamento do chat e envio de mensagens
+import { useState } from 'react';
 import type { Message } from '../types/message';
-import { postMessage } from '../services/chatService';
-import { useSession } from '../contexts/SessionContext';
-import { useConversationContext } from '../contexts/ConversationContext';
-import { isValidMessage } from '../utils/validators';
+import type { UploadResponse } from '../types/upload';
 
+<<<<<<< HEAD
 interface UseChatReturn {
   messages: Message[];
   isLoading: boolean;
@@ -93,4 +92,17 @@ export function useChat(): UseChatReturn {
     retry,
     clearMessages,
   };
+=======
+export function useChat() {
+  const [messages] = useState<Message[]>([]);
+  const [isStreaming] = useState(false);
+  const [error] = useState<string | null>(null);
+  const [activeAttachment] = useState<UploadResponse | null>(null);
+
+  const sendMessage = (_content: string) => {};
+  const cancelStream = () => {};
+  const clearAttachment = () => {};
+
+  return { messages, isStreaming, error, activeAttachment, sendMessage, cancelStream, clearAttachment };
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }

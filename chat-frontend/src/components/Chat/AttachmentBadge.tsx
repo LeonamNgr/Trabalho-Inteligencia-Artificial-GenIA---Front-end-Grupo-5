@@ -1,6 +1,7 @@
 import styles from './AttachmentBadge.module.css';
 
 interface AttachmentBadgeProps {
+<<<<<<< HEAD
   fileName?: string;
 }
 
@@ -12,5 +13,20 @@ export function AttachmentBadge({ fileName }: AttachmentBadgeProps) {
       </svg>
       {fileName}
     </span>
+=======
+  fileName: string;
+  onRemove: () => void;
+}
+
+export function AttachmentBadge({ fileName, onRemove }: AttachmentBadgeProps) {
+  return (
+    <div className={styles.badge}>
+      <div className={styles.icon} aria-hidden="true" />
+      <span className={styles.name}>{fileName}</span>
+      <button className={styles.remove} onClick={onRemove} type="button" aria-label="Remover anexo">
+        &times;
+      </button>
+    </div>
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
   );
 }

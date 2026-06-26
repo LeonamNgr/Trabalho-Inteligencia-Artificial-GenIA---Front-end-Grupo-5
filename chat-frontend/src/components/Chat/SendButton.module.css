@@ -1,2 +1,38 @@
+<<<<<<< HEAD
 .button { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-color); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 .button:disabled { opacity: 0.5; cursor: not-allowed; }
+=======
+.sendButton {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.sendButton:hover:not(:disabled) {
+  background: #1565c0;
+}
+
+.sendButton:focus-visible {
+  outline: 2px solid #1565c0;
+  outline-offset: 2px;
+}
+
+.sendButton:disabled {
+  background: #c0c0c0;
+  cursor: not-allowed;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+}
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1

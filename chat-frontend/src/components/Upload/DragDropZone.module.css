@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .zone {
   border: 2px dashed var(--border-color);
   border-radius: 8px;
@@ -19,4 +20,72 @@
 
 .invalid {
   border-color: var(--color-error);
+=======
+.dragDropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 24px 16px;
+  border: 2px dashed #c0c0c0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  outline: none;
+}
+
+.dragDropZone:hover {
+  border-color: #909090;
+}
+
+.dragDropZone:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+.dragDropZoneActive {
+  border-color: #1976d2;
+  border-style: solid;
+  background-color: rgba(25, 118, 210, 0.06);
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #999;
+  border-radius: 50%;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.icon::before,
+.icon::after {
+  content: '';
+  position: absolute;
+  background: #999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.icon::before {
+  width: 16px;
+  height: 2px;
+}
+
+.icon::after {
+  width: 2px;
+  height: 16px;
+}
+
+.text {
+  font-size: 14px;
+  color: #555;
+}
+
+.hint {
+  font-size: 12px;
+  color: #999;
+>>>>>>> 4df804c529dd6aa90a9fe0970b1be1d05e0f43b1
 }
