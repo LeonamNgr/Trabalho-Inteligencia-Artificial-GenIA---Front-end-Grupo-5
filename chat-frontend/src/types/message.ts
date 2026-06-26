@@ -1,27 +1,9 @@
-export interface AttachmentSummary {
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-}
+import type { UploadResponse } from './upload';
 
 export interface Message {
-  id: number;
-  conversationId: number;
-  role: 'USER' | 'ASSISTANT';
+  id: string;
   content: string;
+  role: 'user' | 'assistant';
   timestamp: string;
-  attachment?: AttachmentSummary | null;
-}
-
-export interface ChatRequest {
-  sessionId: string;
-  conversationId: number | null;
-  content: string;
-  attachmentId?: number | null;
-}
-
-export interface ChatResponse {
-  userMessage: Message;
-  assistantMessage: Message;
-  conversationId: number;
+  attachment?: UploadResponse;
 }

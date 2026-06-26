@@ -4,5 +4,4 @@ export interface UploadResponse {
   fileType: string;
   fileSize: number;
   uploadedAt: string;
-  message: string;
 }
