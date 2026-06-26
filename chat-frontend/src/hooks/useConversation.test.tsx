@@ -1,6 +1,8 @@
+import { useState, useCallback } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import type { Message } from '../types/message';
 import { useConversation } from './useConversation';
 import { SessionContext } from '../contexts/SessionContext';
 import { ConversationContext } from '../contexts/ConversationContext';
@@ -17,22 +19,35 @@ vi.mock('../utils/withRetry', () => ({
   withRetry: <T,>(fn: () => Promise<T>) => fn(),
 }));
 
+vi.mock('../services/conversationStorage', () => ({
+  loadConversations: () => [],
+  saveConversations: vi.fn(),
+  loadMessages: () => [],
+  saveMessages: vi.fn(),
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
 });
 
 function createWrapper() {
   const sessionValue = { sessionId: 'test-session', isLoading: false, error: null, initialize: vi.fn(), destroy: vi.fn() };
-  const conversationValue = {
-    activeConversation: null,
-    messages: [],
-    setActiveConversation: vi.fn(),
-    addMessage: vi.fn(),
-    setMessages: vi.fn(),
-    clearMessages: vi.fn(),
-  };
 
   return function Wrapper({ children }: { children: ReactNode }) {
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [activeConversation, setActiveConversation] = useState<{ id: number } | null>(null);
+    const addMessage = useCallback((msg: Message) => setMessages((prev) => [...prev, msg]), []);
+
+    const conversationValue = {
+      activeConversation,
+      messages,
+      setActiveConversation,
+      addMessage,
+      setMessages,
+      clearMessages: useCallback(() => { setMessages([]); setActiveConversation(null); }, []),
+    };
+
     return (
       <SessionContext.Provider value={sessionValue}>
         <ConversationContext.Provider value={conversationValue}>

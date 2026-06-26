@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { ConversationSummary } from '../types/conversation';
 import type { Conversation } from '../types/conversation';
 import { useSession } from '../contexts/SessionContext';
 import { useConversationContext } from '../contexts/ConversationContext';
 import { getHistory, getConversation } from '../services/chatService';
+import { loadConversations, saveConversations, loadMessages, saveMessages } from '../services/conversationStorage';
 
 interface UseConversationReturn {
   conversations: ConversationSummary[];
@@ -26,12 +27,21 @@ export function useConversation(): UseConversationReturn {
 
     setIsLoading(true);
     setError(null);
+
+    const local = loadConversations(sessionId);
+    if (local.length > 0) {
+      setConversations(local);
+    }
+
     try {
       const response = await getHistory(sessionId);
       setConversations(response.conversations);
+      saveConversations(sessionId, response.conversations);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao carregar histórico';
-      setError(message);
+      if (local.length === 0) {
+        const message = err instanceof Error ? err.message : 'Erro ao carregar histórico';
+        setError(message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -43,14 +53,25 @@ export function useConversation(): UseConversationReturn {
 
       setIsLoading(true);
       setError(null);
+
+      const localMessages = loadMessages(sessionId, id);
+      if (localMessages.length > 0) {
+        const conversation: Conversation = { id };
+        setActiveConversation(conversation);
+        setMessages(localMessages);
+      }
+
       try {
         const response = await getConversation(sessionId, id);
         const conversation: Conversation = { id: response.conversationId };
         setActiveConversation(conversation);
         setMessages(response.messages);
+        saveMessages(sessionId, id, response.messages);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Erro ao carregar conversa';
-        setError(message);
+        if (localMessages.length === 0) {
+          const message = err instanceof Error ? err.message : 'Erro ao carregar conversa';
+          setError(message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -62,6 +83,12 @@ export function useConversation(): UseConversationReturn {
     setActiveConversation(null);
     setMessages([]);
   }, [setActiveConversation, setMessages]);
+
+  useEffect(() => {
+    if (sessionId) {
+      fetchHistory();
+    }
+  }, [sessionId, fetchHistory]);
 
   return {
     conversations,
