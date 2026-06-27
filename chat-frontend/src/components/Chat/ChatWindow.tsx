@@ -10,7 +10,7 @@ export function ChatWindow() {
   return (
     <div className={styles.container}>
       {error && <ErrorMessage message={error} onRetry={retry} />}
-      <MessageList messages={messages} isTyping={isLoading && messages.length > 0} />
+      <MessageList messages={messages} isTyping={isLoading && messages.length > 0} onSendSuggestion={sendMessage} />
       <ChatInput onSend={sendMessage} disabled={isLoading} />
     </div>
   );

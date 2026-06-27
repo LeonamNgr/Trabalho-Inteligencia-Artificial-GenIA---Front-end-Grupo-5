@@ -1,5 +1,12 @@
 import type { UploadResponse } from './upload';
 
+export interface Source {
+  id: number | string;
+  title: string;
+  excerpt: string;
+  relevance?: number;
+}
+
 export interface ChatRequest {
   sessionId: string;
   conversationId: number | null;
@@ -14,6 +21,7 @@ export interface Message {
   content: string;
   timestamp: string;
   attachment?: UploadResponse | null;
+  sources?: Source[];
 }
 
 export interface ChatResponse {
