@@ -1,15 +1,16 @@
 import { useRef, useEffect } from 'react';
 import type { Message } from '../../types/message';
 import { MessageItem } from './MessageItem';
-import { EmptyState } from '../Common/EmptyState';
+import { WelcomeScreen } from './WelcomeScreen';
 import styles from './MessageList.module.css';
 
 interface MessageListProps {
   messages: Message[];
   isTyping?: boolean;
+  onSendSuggestion?: (text: string) => void;
 }
 
-export function MessageList({ messages, isTyping }: MessageListProps) {
+export function MessageList({ messages, isTyping, onSendSuggestion }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export function MessageList({ messages, isTyping }: MessageListProps) {
   }, [messages, isTyping]);
 
   if (messages.length === 0) {
-    return <EmptyState />;
+    return <WelcomeScreen onSendSuggestion={onSendSuggestion ?? (() => {})} />;
   }
 
   return (

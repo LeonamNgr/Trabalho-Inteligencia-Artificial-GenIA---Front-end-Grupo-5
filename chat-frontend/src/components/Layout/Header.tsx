@@ -1,25 +1,15 @@
 import { Logo } from '../Common/Logo';
-import { HealthIndicator } from '../Common/HealthIndicator';
-import { NewChatButton } from '../Common/NewChatButton';
-import styles from './Header.module.css';
+import { HealthStatus } from '../Common/HealthStatus';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
 }
 
-export function Header({ onToggleSidebar }: HeaderProps) {
+export function Header({ onToggleSidebar: _onToggleSidebar }: HeaderProps) {
   return (
-    <header className={styles.header}>
-      <button className={styles.hamburger} onClick={onToggleSidebar} aria-label="Abrir menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
+    <header className="flex items-center justify-between w-full h-14 px-4 border-b border-[#1a2d55] bg-[#020817]/80 backdrop-blur-sm">
       <Logo />
-      <HealthIndicator />
-      <NewChatButton />
+      <HealthStatus />
     </header>
   );
 }
