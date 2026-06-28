@@ -101,7 +101,7 @@ export function useConversation(): UseConversationReturn {
 
   useEffect(() => {
     refreshFromStorage();
-  }, [activeConversation?.id, refreshFromStorage]);
+  }, [activeConversation?.id, messages.length, refreshFromStorage]);
 
   return {
     conversations,
