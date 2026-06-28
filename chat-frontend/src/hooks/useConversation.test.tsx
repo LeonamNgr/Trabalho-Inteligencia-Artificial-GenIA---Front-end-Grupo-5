@@ -72,7 +72,7 @@ describe('useConversation', () => {
   });
 
   it('selects conversation on selectConversation', async () => {
-    mockGetConversation.mockResolvedValue({ id: 1, title: 'Teste', messages: [], createdAt: new Date().toISOString() });
+    mockGetConversation.mockResolvedValue({ id: 1, messages: [] });
 
     const { result } = renderHook(() => useConversation(), { wrapper: createWrapper() });
 

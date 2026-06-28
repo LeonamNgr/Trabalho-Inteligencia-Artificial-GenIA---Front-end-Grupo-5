@@ -1,17 +1,10 @@
-import type { UploadResponse } from './upload';
-
-export interface Source {
-  id: number | string;
-  title: string;
-  excerpt: string;
-  relevance?: number;
-}
+import type { AttachmentResponse } from './upload';
 
 export interface ChatRequest {
   sessionId: string;
   conversationId: number | null;
   content: string;
-  attachmentId?: number | null;
+  attachmentId: number | null;
 }
 
 export interface Message {
@@ -20,8 +13,7 @@ export interface Message {
   role: 'USER' | 'ASSISTANT';
   content: string;
   timestamp: string;
-  attachment?: UploadResponse | null;
-  sources?: Source[];
+  attachment?: AttachmentResponse | null;
 }
 
 export interface ChatResponse {

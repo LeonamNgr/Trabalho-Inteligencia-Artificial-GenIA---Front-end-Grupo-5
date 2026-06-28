@@ -11,21 +11,9 @@ interface UseChatReturn {
   messages: Message[];
   isLoading: boolean;
   error: string | null;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, attachmentId?: number | null) => Promise<void>;
   retry: () => Promise<void>;
   clearMessages: () => void;
-}
-
-const ASSISTANT_REPLIES = [
-  'Interessante! Conte-me mais sobre isso.',
-  'Entendo. Como posso ajudar com isso?',
-  'Ótimo ponto! Vou investigar essa questão.',
-  'Sim, faz sentido. O que mais você gostaria de saber?',
-  'Deixe-me pensar sobre isso... Baseado no que você disse, sugiro explorarmos algumas opções.',
-];
-
-function pickReply(): string {
-  return ASSISTANT_REPLIES[Math.floor(Math.random() * ASSISTANT_REPLIES.length)];
 }
 
 export function useChat(): UseChatReturn {
@@ -41,6 +29,7 @@ export function useChat(): UseChatReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastContent, setLastContent] = useState<string>('');
+  const [lastAttachmentId, setLastAttachmentId] = useState<number | null>(null);
 
   const persistMessages = useCallback(
     (convId: number, msgs: Message[]) => {
@@ -87,7 +76,7 @@ export function useChat(): UseChatReturn {
   );
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (content: string, attachmentId?: number | null) => {
       if (!sessionId) return;
 
       const validation = isValidMessage(content);
@@ -99,50 +88,31 @@ export function useChat(): UseChatReturn {
       setError(null);
       setIsLoading(true);
       setLastContent(content);
-
-      let convId = activeConversation?.id ?? 0;
-      const isNewConversation = convId === 0;
-
-      if (isNewConversation) {
-        convId = Date.now();
-        setActiveConversation({ id: convId });
-      }
-
-      const tempUserMessage: Message = {
-        id: Date.now() + 1,
-        conversationId: convId,
-        role: 'USER',
-        content,
-        timestamp: new Date().toISOString(),
-      };
-      addMessage(tempUserMessage);
-
-      if (isNewConversation) {
-        ensureConversationInList(convId, content);
-      }
+      setLastAttachmentId(attachmentId ?? null);
 
       try {
         const response = await postMessage({
           sessionId,
-          conversationId: convId,
+          conversationId: activeConversation?.id ?? null,
           content,
+          attachmentId: attachmentId ?? null,
         });
+
+        const backendConvId = response.conversationId;
+
+        if (!activeConversation) {
+          setActiveConversation({ id: backendConvId });
+          ensureConversationInList(backendConvId, content);
+        }
+
+        addMessage(response.userMessage);
         addMessage(response.assistantMessage);
-        const allMsgs = [...messages, tempUserMessage, response.assistantMessage];
-        persistMessages(convId, allMsgs);
-        updateConversationLastMessage(convId, response.assistantMessage.content);
-      } catch {
-        const simulated: Message = {
-          id: Date.now() + 2,
-          conversationId: convId,
-          role: 'ASSISTANT',
-          content: pickReply(),
-          timestamp: new Date().toISOString(),
-        };
-        addMessage(simulated);
-        const allMsgs = [...messages, tempUserMessage, simulated];
-        persistMessages(convId, allMsgs);
-        updateConversationLastMessage(convId, simulated.content);
+        const allMsgs = [...messages, response.userMessage, response.assistantMessage];
+        persistMessages(backendConvId, allMsgs);
+        updateConversationLastMessage(backendConvId, response.assistantMessage.content);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Erro ao enviar mensagem';
+        setError(message);
       } finally {
         setIsLoading(false);
       }
@@ -152,9 +122,9 @@ export function useChat(): UseChatReturn {
 
   const retry = useCallback(async () => {
     if (lastContent) {
-      await sendMessage(lastContent);
+      await sendMessage(lastContent, lastAttachmentId);
     }
-  }, [lastContent, sendMessage]);
+  }, [lastContent, lastAttachmentId, sendMessage]);
 
   const clearMessages = useCallback(() => {
     setError(null);

@@ -19,7 +19,7 @@ describe('useHealth', () => {
   });
 
   it('sets UP status on health check success', async () => {
-    mockGetHealth.mockResolvedValue({ status: 'UP', database: 'UP', diskSpace: 'OK', timestamp: new Date().toISOString(), version: '1.0.0' });
+    mockGetHealth.mockResolvedValue({ status: 'UP', database: 'UP', ollama: 'UP', diskSpace: 'OK', timestamp: new Date().toISOString(), version: '1.0.0' });
 
     const { result } = renderHook(() => useHealth());
 
@@ -43,7 +43,7 @@ describe('useHealth', () => {
   });
 
   it('updates lastCheck after check', async () => {
-    mockGetHealth.mockResolvedValue({ status: 'UP', database: 'UP', diskSpace: 'OK', timestamp: new Date().toISOString(), version: '1.0.0' });
+    mockGetHealth.mockResolvedValue({ status: 'UP', database: 'UP', ollama: 'UP', diskSpace: 'OK', timestamp: new Date().toISOString(), version: '1.0.0' });
 
     const { result } = renderHook(() => useHealth());
 
@@ -55,7 +55,7 @@ describe('useHealth', () => {
   });
 
   it('can check health manually', async () => {
-    mockGetHealth.mockResolvedValue({ status: 'UP', database: 'UP', diskSpace: 'OK', timestamp: new Date().toISOString(), version: '1.0.0' });
+    mockGetHealth.mockResolvedValue({ status: 'UP', database: 'UP', ollama: 'UP', diskSpace: 'OK', timestamp: new Date().toISOString(), version: '1.0.0' });
 
     const { result } = renderHook(() => useHealth());
 

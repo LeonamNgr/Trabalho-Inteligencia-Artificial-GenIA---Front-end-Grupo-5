@@ -9,6 +9,10 @@ const STATUS_MAP = {
     label: 'ONLINE',
     dotClass: 'bg-[#22c55e]',
   },
+  DEGRADED: {
+    label: 'DEGRADADO',
+    dotClass: 'bg-[#f59e0b]',
+  },
   OFFLINE: {
     label: 'OFFLINE',
     dotClass: 'bg-[#ef4444]',
@@ -21,6 +25,7 @@ export function HealthStatus() {
   const current =
     status === 'UP' ? STATUS_MAP.ONLINE
     : status === 'DOWN' ? STATUS_MAP.OFFLINE
+    : status === 'DEGRADED' ? STATUS_MAP.DEGRADED
     : STATUS_MAP.CHECKING;
 
   return (

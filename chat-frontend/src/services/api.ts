@@ -48,10 +48,12 @@ export class ValidationError extends AppError {
 const errorMessages: Record<number, string> = {
   400: 'Verifique os dados enviados.',
   404: 'Recurso não encontrado.',
-  413: 'O arquivo excede o limite de 10 MB.',
+  409: 'Sessão expirada. Crie uma nova sessão.',
+  413: 'O arquivo excede o limite de tamanho permitido.',
   415: 'Formato de arquivo não suportado.',
   422: 'Os dados enviados são inválidos.',
   500: 'Erro no servidor. Tente novamente mais tarde.',
+  502: 'Serviço de IA indisponível. Tente novamente mais tarde.',
 };
 
 export function getErrorMessage(status: number, body?: ErrorResponse): string {

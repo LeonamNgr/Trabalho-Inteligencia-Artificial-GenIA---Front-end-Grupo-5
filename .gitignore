@@ -38,6 +38,9 @@ npm-debug.log*
 # Testing
 coverage/
 
+# Vite cache
+.vite/
+
 # Temp files
 .tmp
 tmp/
