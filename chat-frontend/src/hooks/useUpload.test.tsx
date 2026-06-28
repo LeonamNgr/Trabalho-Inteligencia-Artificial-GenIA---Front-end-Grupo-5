@@ -62,7 +62,7 @@ describe('useUpload', () => {
     const { result } = renderHook(() => useUpload(), { wrapper: createWrapper() });
 
     await act(async () => {
-      await result.current.uploadFile(createFile({ type: 'image/png', name: 'test.png' }));
+      await result.current.uploadFile(createFile({ type: 'application/zip', name: 'test.zip' }));
     });
 
     expect(result.current.error).not.toBeNull();

@@ -6,6 +6,7 @@ import { useConversationContext } from '../contexts/ConversationContext';
 import { postMessage } from '../services/chatService';
 import { isValidMessage } from '../utils/validators';
 import { saveMessages, loadConversations, saveConversations } from '../services/conversationStorage';
+import { HttpError } from '../services/api';
 
 interface UseChatReturn {
   messages: Message[];
@@ -17,7 +18,7 @@ interface UseChatReturn {
 }
 
 export function useChat(): UseChatReturn {
-  const { sessionId } = useSession();
+  const { sessionId, error: sessionError, initialize: reinitializeSession } = useSession();
   const {
     messages,
     activeConversation,
@@ -46,7 +47,7 @@ export function useChat(): UseChatReturn {
       if (!list.some((c) => c.id === convId)) {
         const entry: ConversationSummary = {
           id: convId,
-          title: firstMessage.slice(0, 60) + (firstMessage.length > 60 ? '...' : ''),
+          title: firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : ''),
           messageCount: 1,
           lastMessage: firstMessage,
           lastActivity: new Date().toISOString(),
@@ -77,7 +78,10 @@ export function useChat(): UseChatReturn {
 
   const sendMessage = useCallback(
     async (content: string, attachmentId?: number | null) => {
-      if (!sessionId) return;
+      if (!sessionId) {
+        setError(sessionError || 'Sessão não disponível. Aguarde ou recarregue a página.');
+        return;
+      }
 
       const validation = isValidMessage(content);
       if (validation !== true) {
@@ -111,13 +115,18 @@ export function useChat(): UseChatReturn {
         persistMessages(backendConvId, allMsgs);
         updateConversationLastMessage(backendConvId, response.assistantMessage.content);
       } catch (err) {
+        if (err instanceof HttpError && err.status === 409) {
+          setError('Sessão expirada. Criando uma nova sessão...');
+          await reinitializeSession();
+          return;
+        }
         const message = err instanceof Error ? err.message : 'Erro ao enviar mensagem';
         setError(message);
       } finally {
         setIsLoading(false);
       }
     },
-    [sessionId, activeConversation, messages, addMessage, setActiveConversation, persistMessages, ensureConversationInList, updateConversationLastMessage],
+    [sessionId, sessionError, activeConversation, messages, addMessage, setActiveConversation, persistMessages, ensureConversationInList, updateConversationLastMessage, reinitializeSession],
   );
 
   const retry = useCallback(async () => {

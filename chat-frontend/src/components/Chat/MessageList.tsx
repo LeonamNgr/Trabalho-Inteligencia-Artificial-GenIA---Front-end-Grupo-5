@@ -11,10 +11,16 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, isTyping, onSendSuggestion }: MessageListProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = containerRef.current;
+    if (!el) return;
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150;
+    if (isNearBottom) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isTyping]);
 
   if (messages.length === 0) {
@@ -22,7 +28,7 @@ export function MessageList({ messages, isTyping, onSendSuggestion }: MessageLis
   }
 
   return (
-    <div className={styles.container} role="log" aria-live="polite">
+    <div className={styles.container} ref={containerRef} role="log" aria-live="polite">
       {messages.map((message) => (
         <MessageItem key={message.id} message={message} />
       ))}

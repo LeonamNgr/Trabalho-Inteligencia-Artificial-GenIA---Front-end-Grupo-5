@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, ty
 import type { SessionResponse } from '../types/session';
 import { createSession as apiCreateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
 import { STORAGE_KEYS, RETRY } from '../utils/constants';
+import { isValidSessionId } from '../utils/validators';
 
 interface SessionContextType {
   sessionId: string | null;
@@ -18,6 +19,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const retryCount = useRef(0);
+
+  const clearStoredSession = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
+    setSessionId(null);
+  }, []);
 
   const createWithRetry = useCallback(async (): Promise<void> => {
     try {
@@ -43,10 +49,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     const stored = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
-    if (stored) {
+    if (stored && isValidSessionId(stored)) {
       setSessionId(stored);
       setIsLoading(false);
       return;
+    }
+
+    if (stored && !isValidSessionId(stored)) {
+      clearStoredSession();
     }
 
     try {
@@ -56,7 +66,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [createWithRetry]);
+  }, [createWithRetry, clearStoredSession]);
 
   const destroy = useCallback(async () => {
     if (!sessionId) return;

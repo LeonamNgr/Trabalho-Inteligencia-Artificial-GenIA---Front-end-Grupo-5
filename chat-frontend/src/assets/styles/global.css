@@ -14,6 +14,25 @@ body {
   color: var(--color-text);
 }
 
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8899bb;
+  border-radius: 6px;
+  min-height: 48px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aabbdd;
+}
+
 /* --- Marvel Background (imagem com overlay escuro) --- */
 .marvel-bg {
   position: relative;
