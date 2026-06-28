@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type { SessionResponse } from '../types/session';
-import { createSession as apiCreateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
-import { STORAGE_KEYS } from '../utils/constants';
+import { createSession as apiCreateSession, validateSession as apiValidateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
+import { STORAGE_KEYS, RETRY } from '../utils/constants';
 
 interface SessionContextType {
   sessionId: string | null;
@@ -17,29 +17,53 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionId] = useState<string | null>(() =>
     localStorage.getItem(STORAGE_KEYS.SESSION_ID),
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const retryCount = useRef(0);
 
-  const initialize = useCallback(async () => {
-    const stored = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
-    if (stored) {
-      setSessionId(stored);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
+  const createWithRetry = useCallback(async (): Promise<void> => {
     try {
       const response: SessionResponse = await apiCreateSession();
       localStorage.setItem(STORAGE_KEYS.SESSION_ID, response.sessionId);
       setSessionId(response.sessionId);
+      setError(null);
+      retryCount.current = 0;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao criar sessão';
+      retryCount.current++;
+      if (retryCount.current < RETRY.MAX_ATTEMPTS) {
+        await new Promise(resolve => setTimeout(resolve, RETRY.BASE_DELAY * retryCount.current));
+        return createWithRetry();
+      }
       setError(message);
+      throw err;
+    }
+  }, []);
+
+  const initialize = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    const stored = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
+    if (stored) {
+      try {
+        await apiValidateSession(stored);
+        setSessionId(stored);
+        setIsLoading(false);
+        return;
+      } catch {
+        localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
+      }
+    }
+
+    try {
+      await createWithRetry();
+    } catch {
+      // error já definido no createWithRetry
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [createWithRetry]);
 
   const destroy = useCallback(async () => {
     if (!sessionId) return;
@@ -54,10 +78,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [sessionId]);
 
   useEffect(() => {
-    if (!sessionId) {
-      initialize();
-    }
-  }, [sessionId, initialize]);
+    initialize();
+  }, [initialize]);
 
   return (
     <SessionContext.Provider value={{ sessionId, isLoading, error, initialize, destroy }}>
