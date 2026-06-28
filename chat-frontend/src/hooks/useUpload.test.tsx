@@ -45,7 +45,7 @@ describe('useUpload', () => {
   });
 
   it('uploads file successfully', async () => {
-    mockUploadFile.mockResolvedValue({ id: 1, fileName: 'test.txt', downloadUrl: '/uploads/test.txt', uploadedAt: new Date().toISOString() });
+    mockUploadFile.mockResolvedValue({ attachmentId: 1, fileName: 'test.txt', fileType: 'text/plain', fileSize: 1024, uploadedAt: new Date().toISOString(), message: 'Upload realizado com sucesso.' });
 
     const { result } = renderHook(() => useUpload(), { wrapper: createWrapper() });
 
@@ -54,6 +54,8 @@ describe('useUpload', () => {
     });
 
     expect(mockUploadFile).toHaveBeenCalled();
+    expect(result.current.uploadedFile?.attachmentId).toBe(1);
+    expect(result.current.uploadedFile?.fileName).toBe('test.txt');
   });
 
   it('rejects invalid file type', async () => {
@@ -89,7 +91,7 @@ describe('useUpload', () => {
   });
 
   it('resets state on reset call', async () => {
-    mockUploadFile.mockResolvedValue({ id: 1, fileName: 'test.txt', downloadUrl: '/uploads/test.txt', uploadedAt: new Date().toISOString() });
+    mockUploadFile.mockResolvedValue({ attachmentId: 1, fileName: 'test.txt', fileType: 'text/plain', fileSize: 1024, uploadedAt: new Date().toISOString(), message: 'Upload realizado com sucesso.' });
 
     const { result } = renderHook(() => useUpload(), { wrapper: createWrapper() });
 

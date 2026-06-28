@@ -19,6 +19,6 @@ export interface HistoryResponse {
 }
 
 export interface ConversationResponse {
-  conversationId: number;
+  id: number;
   messages: Message[];
 }

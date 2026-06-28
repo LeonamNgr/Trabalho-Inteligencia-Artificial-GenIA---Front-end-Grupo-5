@@ -69,10 +69,10 @@ export function useConversation(): UseConversationReturn {
 
       try {
         const response = await getConversation(sessionId, id);
-        const conversation: Conversation = { id: response.conversationId };
+        const conversation: Conversation = { id: response.id };
         setActiveConversation(conversation);
         setMessages(response.messages);
-        saveMessages(sessionId, id, response.messages);
+        saveMessages(sessionId, response.id, response.messages);
       } catch (err) {
         if (localMessages.length === 0) {
           const message = err instanceof Error ? err.message : 'Erro ao carregar conversa';

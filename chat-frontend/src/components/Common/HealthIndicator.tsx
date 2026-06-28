@@ -5,8 +5,15 @@ export function HealthIndicator() {
   const { status } = useHealth();
 
   const statusClass =
-    status === 'UP' ? styles.up : status === 'DOWN' ? styles.down : styles.checking;
-  const label = status === 'UP' ? 'UP' : status === 'DOWN' ? 'DOWN' : 'CHECKING';
+    status === 'UP' ? styles.up
+    : status === 'DEGRADED' ? styles.degraded
+    : status === 'DOWN' ? styles.down
+    : styles.checking;
+  const label =
+    status === 'UP' ? 'UP'
+    : status === 'DEGRADED' ? 'DEGRADED'
+    : status === 'DOWN' ? 'DOWN'
+    : 'CHECKING';
 
   return (
     <div className={styles.indicator} role="status">

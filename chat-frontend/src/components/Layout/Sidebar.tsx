@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Plus, MessageSquare, Settings, Menu, X } from 'lucide-react';
 import { useConversation } from '../../hooks/useConversation';
 import { useConversationContext } from '../../contexts/ConversationContext';
 import { HealthStatus } from '../Common/HealthStatus';
+import { DocumentPanel } from '../Documents/DocumentPanel';
 
 interface SidebarProps {
   open: boolean;
@@ -56,6 +56,10 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
             </button>
           </motion.div>
         ))}
+      </div>
+
+      <div className="px-2">
+        <DocumentPanel />
       </div>
 
       <div className="p-4 border-t border-[#1a3d6b]/40 space-y-2">
