@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type { SessionResponse } from '../types/session';
-import { createSession as apiCreateSession, validateSession as apiValidateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
+import { createSession as apiCreateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
 import { STORAGE_KEYS, RETRY } from '../utils/constants';
 
 interface SessionContextType {
@@ -14,9 +14,7 @@ interface SessionContextType {
 export const SessionContext = createContext<SessionContextType | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [sessionId, setSessionId] = useState<string | null>(() =>
-    localStorage.getItem(STORAGE_KEYS.SESSION_ID),
-  );
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const retryCount = useRef(0);
@@ -46,14 +44,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
     const stored = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
     if (stored) {
-      try {
-        await apiValidateSession(stored);
-        setSessionId(stored);
-        setIsLoading(false);
-        return;
-      } catch {
-        localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
-      }
+      setSessionId(stored);
+      setIsLoading(false);
+      return;
     }
 
     try {
