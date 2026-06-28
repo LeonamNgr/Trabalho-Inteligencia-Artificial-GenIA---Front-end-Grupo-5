@@ -3,7 +3,7 @@ import { TIMEOUTS } from '../utils/constants';
 import { api } from './api';
 
 export async function createSession(): Promise<SessionResponse> {
-  return api.post<SessionResponse>('/api/session', undefined, TIMEOUTS.SESSION);
+  return api.get<SessionResponse>('/api/session', TIMEOUTS.SESSION);
 }
 
 export async function validateSession(sessionId: string): Promise<SessionResponse> {
