@@ -2,6 +2,7 @@ import { useChat } from '../../hooks/useChat';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { ErrorMessage } from '../Common/ErrorMessage';
+import { Loading } from '../Common/Loading';
 import styles from './ChatWindow.module.css';
 
 export function ChatWindow() {
@@ -10,7 +11,11 @@ export function ChatWindow() {
   return (
     <div className={styles.container}>
       {error && <ErrorMessage message={error} onRetry={retry} />}
-      <MessageList messages={messages} isTyping={isLoading && messages.length > 0} onSendSuggestion={sendMessage} />
+      {isLoading && messages.length === 0 ? (
+        <Loading />
+      ) : (
+        <MessageList messages={messages} isTyping={isLoading} onSendSuggestion={sendMessage} />
+      )}
       <ChatInput onSend={sendMessage} disabled={isLoading} />
     </div>
   );

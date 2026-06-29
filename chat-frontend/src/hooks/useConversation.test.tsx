@@ -83,8 +83,10 @@ describe('useConversation', () => {
     expect(mockGetConversation).toHaveBeenCalled();
   });
 
-  it('creates new conversation', () => {
+  it('creates new conversation', async () => {
+    mockGetHistory.mockResolvedValue({ sessionId: 'test-session', conversations: [] });
     const { result } = renderHook(() => useConversation(), { wrapper: createWrapper() });
+    await act(async () => {});
 
     act(() => {
       result.current.createNewConversation();

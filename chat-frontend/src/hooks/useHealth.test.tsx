@@ -13,9 +13,12 @@ beforeEach(() => {
 });
 
 describe('useHealth', () => {
-  it('starts with CHECKING status', () => {
-    const { result } = renderHook(() => useHealth());
+  it('starts with CHECKING status', async () => {
+    mockGetHealth.mockResolvedValue({ status: 'UP', database: 'UP', ollama: 'UP', diskSpace: 'OK', timestamp: new Date().toISOString(), version: '1.0.0' });
+    const { result, unmount } = renderHook(() => useHealth());
     expect(result.current.status).toBe('CHECKING');
+    unmount();
+    await act(async () => {});
   });
 
   it('sets UP status on health check success', async () => {

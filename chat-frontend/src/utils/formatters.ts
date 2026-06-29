@@ -20,6 +20,8 @@ export function formatFileType(mimeType: string): string {
   const map: Record<string, string> = {
     'text/plain': 'TXT',
     'application/pdf': 'PDF',
+    'text/markdown': 'MD',
+    'text/html': 'HTML',
   };
   return map[mimeType] ?? mimeType;
 }

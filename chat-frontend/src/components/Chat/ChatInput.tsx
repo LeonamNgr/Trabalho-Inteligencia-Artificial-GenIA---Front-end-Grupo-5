@@ -1,6 +1,6 @@
 import { useState, useRef, type KeyboardEvent } from 'react';
 import { motion } from 'motion/react';
-import { Send, Paperclip, Mic, X } from 'lucide-react';
+import { Send, Paperclip, X } from 'lucide-react';
 import { useUpload } from '../../hooks/useUpload';
 
 interface ChatInputProps {
@@ -86,15 +86,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
                 el.style.height = Math.min(el.scrollHeight, 160) + 'px';
               }}
             />
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="absolute right-2"
-            >
-              <button className="text-gray-400 hover:text-[#ED1D24] hover:bg-[#ED1D24]/10 p-1.5 rounded-lg transition-all cursor-pointer" type="button">
-                <Mic className="w-4 h-4" />
-              </button>
-            </motion.div>
+
           </div>
 
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

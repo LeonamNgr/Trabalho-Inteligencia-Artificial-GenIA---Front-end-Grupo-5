@@ -5,6 +5,7 @@ import { useSession } from '../contexts/SessionContext';
 import { useConversationContext } from '../contexts/ConversationContext';
 import { getHistory, getConversation } from '../services/chatService';
 import { loadConversations, saveConversations, loadMessages, saveMessages } from '../services/conversationStorage';
+import { HttpError } from '../services/api';
 
 interface UseConversationReturn {
   conversations: ConversationSummary[];
@@ -16,7 +17,7 @@ interface UseConversationReturn {
 }
 
 export function useConversation(): UseConversationReturn {
-  const { sessionId } = useSession();
+  const { sessionId, error: sessionError, initialize: reinitializeSession } = useSession();
   const { activeConversation, messages, setActiveConversation, setMessages } = useConversationContext();
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +30,10 @@ export function useConversation(): UseConversationReturn {
   }, [sessionId]);
 
   const fetchHistory = useCallback(async () => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      setError(sessionError || 'Sessão não disponível.');
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -44,6 +48,10 @@ export function useConversation(): UseConversationReturn {
       setConversations(response.conversations);
       saveConversations(sessionId, response.conversations);
     } catch (err) {
+      if (err instanceof HttpError && err.status === 409) {
+        await reinitializeSession();
+        return;
+      }
       if (local.length === 0) {
         const message = err instanceof Error ? err.message : 'Erro ao carregar histórico';
         setError(message);
@@ -51,11 +59,14 @@ export function useConversation(): UseConversationReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [sessionId]);
+  }, [sessionId, sessionError, reinitializeSession]);
 
   const selectConversation = useCallback(
     async (id: number) => {
-      if (!sessionId) return;
+      if (!sessionId) {
+        setError(sessionError || 'Sessão não disponível.');
+        return;
+      }
 
       setIsLoading(true);
       setError(null);
@@ -74,6 +85,10 @@ export function useConversation(): UseConversationReturn {
         setMessages(response.messages);
         saveMessages(sessionId, response.id, response.messages);
       } catch (err) {
+        if (err instanceof HttpError && err.status === 409) {
+          await reinitializeSession();
+          return;
+        }
         if (localMessages.length === 0) {
           const message = err instanceof Error ? err.message : 'Erro ao carregar conversa';
           setError(message);
@@ -82,7 +97,7 @@ export function useConversation(): UseConversationReturn {
         setIsLoading(false);
       }
     },
-    [sessionId, setActiveConversation, setMessages],
+    [sessionId, sessionError, setActiveConversation, setMessages, reinitializeSession],
   );
 
   const createNewConversation = useCallback(() => {

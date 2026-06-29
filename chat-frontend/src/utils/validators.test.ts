@@ -29,8 +29,20 @@ describe('isAllowedFileType', () => {
     expect(isAllowedFileType('application/pdf')).toBe(true);
   });
 
-  it('rejects image/png', () => {
-    expect(isAllowedFileType('image/png')).toBe(false);
+  it('accepts image/png (spec permitido)', () => {
+    expect(isAllowedFileType('image/png')).toBe(true);
+  });
+
+  it('accepts image/jpeg', () => {
+    expect(isAllowedFileType('image/jpeg')).toBe(true);
+  });
+
+  it('accepts application/msword', () => {
+    expect(isAllowedFileType('application/msword')).toBe(true);
+  });
+
+  it('rejects application/zip', () => {
+    expect(isAllowedFileType('application/zip')).toBe(false);
   });
 });
 
@@ -41,6 +53,10 @@ describe('isAllowedExtension', () => {
 
   it('accepts .pdf', () => {
     expect(isAllowedExtension('file.pdf')).toBe(true);
+  });
+
+  it('accepts .png (spec permitido)', () => {
+    expect(isAllowedExtension('image.png')).toBe(true);
   });
 
   it('rejects .exe', () => {
