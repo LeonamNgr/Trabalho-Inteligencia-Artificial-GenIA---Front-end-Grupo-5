@@ -115,8 +115,8 @@ export function useChat(): UseChatReturn {
         persistMessages(backendConvId, allMsgs);
         updateConversationLastMessage(backendConvId, response.assistantMessage.content);
       } catch (err) {
-        if (err instanceof HttpError && err.status === 409) {
-          setError('Sessão expirada. Criando uma nova sessão...');
+        if (err instanceof HttpError && (err.status === 404 || err.status === 409)) {
+          setError('Sessão expirada ou inválida. Criando uma nova sessão...');
           await reinitializeSession();
           return;
         }

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type { SessionResponse } from '../types/session';
-import { createSession as apiCreateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
+import { createSession as apiCreateSession, validateSession as apiValidateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
 import { STORAGE_KEYS, RETRY } from '../utils/constants';
 import { isValidSessionId } from '../utils/validators';
 
@@ -50,9 +50,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
     const stored = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
     if (stored && isValidSessionId(stored)) {
-      setSessionId(stored);
-      setIsLoading(false);
-      return;
+      try {
+        const valid = await apiValidateSession(stored);
+        if (valid && !valid.expired) {
+          setSessionId(stored);
+          setIsLoading(false);
+          return;
+        }
+      } catch {
+        // network error — try creating a new session
+      }
+      clearStoredSession();
     }
 
     if (stored && !isValidSessionId(stored)) {
@@ -62,7 +70,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     try {
       await createWithRetry();
     } catch {
-      // error já definido no createWithRetry
+      // error already set in createWithRetry
     } finally {
       setIsLoading(false);
     }

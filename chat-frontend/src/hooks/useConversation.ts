@@ -48,7 +48,7 @@ export function useConversation(): UseConversationReturn {
       setConversations(response.conversations);
       saveConversations(sessionId, response.conversations);
     } catch (err) {
-      if (err instanceof HttpError && err.status === 409) {
+      if (err instanceof HttpError && (err.status === 404 || err.status === 409)) {
         await reinitializeSession();
         return;
       }
@@ -85,17 +85,17 @@ export function useConversation(): UseConversationReturn {
         setMessages(response.messages);
         saveMessages(sessionId, response.id, response.messages);
       } catch (err) {
-        if (err instanceof HttpError && err.status === 409) {
-          await reinitializeSession();
-          return;
-        }
-        if (localMessages.length === 0) {
-          const message = err instanceof Error ? err.message : 'Erro ao carregar conversa';
-          setError(message);
-        }
-      } finally {
-        setIsLoading(false);
+      if (err instanceof HttpError && (err.status === 404 || err.status === 409)) {
+        await reinitializeSession();
+        return;
       }
+      if (localMessages.length === 0) {
+        const message = err instanceof Error ? err.message : 'Erro ao carregar conversa';
+        setError(message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
     },
     [sessionId, sessionError, setActiveConversation, setMessages, reinitializeSession],
   );
