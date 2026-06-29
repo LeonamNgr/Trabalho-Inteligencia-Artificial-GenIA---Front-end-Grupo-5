@@ -3,7 +3,7 @@ import type { Message } from '../types/message';
 import type { ConversationSummary } from '../types/conversation';
 import { useSession } from '../contexts/SessionContext';
 import { useConversationContext } from '../contexts/ConversationContext';
-import { postMessage, uploadAndAsk } from '../services/chatService';
+import { postMessageAsync, uploadAndAsk } from '../services/chatService';
 import { isValidMessage, isAllowedFileType, isAllowedExtension, isWithinFileSizeLimit } from '../utils/validators';
 import { saveMessages, loadConversations, saveConversations } from '../services/conversationStorage';
 import { HttpError } from '../services/api';
@@ -25,6 +25,7 @@ export function useChat(): UseChatReturn {
     activeConversation,
     setActiveConversation,
     addMessage,
+    updateMessage,
     clearMessages: clearCtx,
   } = useConversationContext();
 
@@ -95,26 +96,52 @@ export function useChat(): UseChatReturn {
       setLastContent(content);
       setLastAttachmentId(attachmentId ?? null);
 
+      const tempUserId = -Date.now();
+      let backendConvId: number | null = null;
+
       try {
-        const response = await postMessage({
+        const tempUser: Message = {
+          id: tempUserId,
+          conversationId: activeConversation?.id ?? 0,
+          role: 'USER',
+          content,
+          timestamp: new Date().toISOString(),
+        };
+        addMessage(tempUser);
+
+        const response = await postMessageAsync({
           sessionId,
           conversationId: activeConversation?.id ?? null,
           content,
           attachmentId: attachmentId ?? null,
         });
 
-        const backendConvId = response.conversationId;
+        backendConvId = response.conversationId;
 
         if (!activeConversation) {
           setActiveConversation({ id: backendConvId });
           ensureConversationInList(backendConvId, content);
         }
 
-        addMessage(response.userMessage);
-        addMessage(response.assistantMessage);
-        const allMsgs = [...messages, response.userMessage, response.assistantMessage];
+        updateMessage(tempUserId, {
+          id: response.userMessage.id,
+          conversationId: backendConvId,
+          content: response.userMessage.content,
+          timestamp: response.userMessage.timestamp,
+        });
+
+        const assistantMsg: Message = {
+          id: response.assistantMessage.id,
+          conversationId: backendConvId,
+          role: 'ASSISTANT',
+          content: response.assistantMessage.content,
+          timestamp: response.assistantMessage.timestamp,
+        };
+        addMessage(assistantMsg);
+
+        const allMsgs = [response.userMessage, assistantMsg];
         persistMessages(backendConvId, allMsgs);
-        updateConversationLastMessage(backendConvId, response.assistantMessage.content);
+        updateConversationLastMessage(backendConvId, assistantMsg.content);
       } catch (err) {
         if (err instanceof HttpError && (err.status === 404 || err.status === 409)) {
           setError('Sessão expirada ou inválida. Criando uma nova sessão...');
@@ -127,7 +154,7 @@ export function useChat(): UseChatReturn {
         setIsLoading(false);
       }
     },
-    [sessionId, sessionError, activeConversation, messages, addMessage, setActiveConversation, persistMessages, ensureConversationInList, updateConversationLastMessage, reinitializeSession],
+    [sessionId, sessionError, activeConversation, addMessage, updateMessage, setActiveConversation, persistMessages, ensureConversationInList, updateConversationLastMessage, reinitializeSession],
   );
 
   const sendFileMessage = useCallback(
@@ -143,7 +170,7 @@ export function useChat(): UseChatReturn {
       }
 
       if (!isWithinFileSizeLimit(file.size)) {
-        setError('O arquivo excede o limite de 10 MB.');
+        setError('O arquivo excede o limite de 50 MB.');
         return;
       }
 
@@ -166,29 +193,22 @@ export function useChat(): UseChatReturn {
           setActiveConversation({ id: backendConvId });
         }
 
-        const userMsg: Message = {
-          id: Date.now(),
-          conversationId: backendConvId,
-          role: 'USER',
-          content: content || `[Arquivo: ${file.name}]`,
-          timestamp: new Date().toISOString(),
-        };
+        addMessage(response.userMessage);
 
         const assistantMsg: Message = {
-          id: Date.now() + 1,
+          id: response.assistantMessage.id,
           conversationId: backendConvId,
           role: 'ASSISTANT',
-          content: response.message,
-          timestamp: response.timestamp,
+          content: response.assistantMessage.content,
+          timestamp: response.assistantMessage.timestamp,
         };
 
         if (!activeConversation) {
-          ensureConversationInList(backendConvId, userMsg.content);
+          ensureConversationInList(backendConvId, response.userMessage.content);
         }
 
-        addMessage(userMsg);
         addMessage(assistantMsg);
-        const allMsgs = [...messages, userMsg, assistantMsg];
+        const allMsgs = [...messages, response.userMessage, assistantMsg];
         persistMessages(backendConvId, allMsgs);
         updateConversationLastMessage(backendConvId, assistantMsg.content);
       } catch (err) {

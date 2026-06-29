@@ -39,11 +39,16 @@ function createWrapper() {
     const [activeConversation, setActiveConversation] = useState<{ id: number } | null>(null);
     const addMessage = useCallback((msg: Message) => setMessages((prev) => [...prev, msg]), []);
 
+    const updateMessage = useCallback((id: number, updates: Partial<Message>) => {
+      setMessages((prev) => prev.map((msg) => (msg.id === id ? { ...msg, ...updates } : msg)));
+    }, []);
+
     const conversationValue = {
       activeConversation,
       messages,
       setActiveConversation,
       addMessage,
+      updateMessage,
       setMessages,
       clearMessages: useCallback(() => { setMessages([]); setActiveConversation(null); }, []),
     };

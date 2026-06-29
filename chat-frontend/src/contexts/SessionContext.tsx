@@ -1,15 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type { SessionResponse } from '../types/session';
-<<<<<<< Updated upstream
 import { createSession as apiCreateSession, validateSession as apiValidateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
 import { STORAGE_KEYS, RETRY } from '../utils/constants';
 import { isValidSessionId } from '../utils/validators';
-=======
-import { createSession as apiCreateSession, deleteSession as apiDeleteSession } from '../services/sessionService';
-import { getHistory } from '../services/chatService';
-import { HttpError } from '../services/api';
-import { STORAGE_KEYS } from '../utils/constants';
->>>>>>> Stashed changes
 
 interface SessionContextType {
   sessionId: string | null;
@@ -27,29 +20,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const retryCount = useRef(0);
 
-<<<<<<< Updated upstream
   const clearStoredSession = useCallback(() => {
     localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
     setSessionId(null);
   }, []);
-=======
-  const initialize = useCallback(async () => {
-    const stored = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
-    if (stored) {
-      try {
-        await getHistory(stored);
-        setSessionId(stored);
-        return;
-      } catch (err) {
-        if (err instanceof HttpError) {
-          localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
-        } else {
-          setSessionId(stored);
-          return;
-        }
-      }
-    }
->>>>>>> Stashed changes
 
   const createWithRetry = useCallback(async (): Promise<void> => {
     try {

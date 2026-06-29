@@ -7,6 +7,7 @@ interface ConversationContextType {
   messages: Message[];
   setActiveConversation: (conversation: Conversation | null) => void;
   addMessage: (message: Message) => void;
+  updateMessage: (id: number, updates: Partial<Message>) => void;
   setMessages: (messages: Message[]) => void;
   clearMessages: () => void;
 }
@@ -21,6 +22,12 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
     setMessages((prev) => [...prev, message]);
   }, []);
 
+  const updateMessage = useCallback((id: number, updates: Partial<Message>) => {
+    setMessages((prev) =>
+      prev.map((msg) => (msg.id === id ? { ...msg, ...updates } : msg)),
+    );
+  }, []);
+
   const clearMessages = useCallback(() => {
     setMessages([]);
     setActiveConversation(null);
@@ -33,6 +40,7 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
         messages,
         setActiveConversation,
         addMessage,
+        updateMessage,
         setMessages,
         clearMessages,
       }}
