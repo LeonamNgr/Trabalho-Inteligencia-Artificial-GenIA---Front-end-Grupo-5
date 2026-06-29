@@ -21,3 +21,10 @@ export interface ChatResponse {
   assistantMessage: Message;
   conversationId: number;
 }
+
+export interface UploadAndAskResponse {
+  message: string;
+  sessionId: string;
+  conversationId: number;
+  timestamp: string;
+}

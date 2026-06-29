@@ -21,9 +21,16 @@ export const ALLOWED_DOCUMENT_MIME_TYPES = [
   'application/pdf',
   'text/markdown',
   'text/html',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/jpeg',
+  'image/png',
+  'image/bmp',
+  'image/tiff',
+  'image/gif',
 ] as const;
 
-export const ALLOWED_DOCUMENT_EXTENSIONS = ['.txt', '.pdf', '.md', '.html'] as const;
+export const ALLOWED_DOCUMENT_EXTENSIONS = ['.txt', '.pdf', '.md', '.html', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif', '.gif'] as const;
 
 export const MAX_MESSAGE_LENGTH = 5000;
 

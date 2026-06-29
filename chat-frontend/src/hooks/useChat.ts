@@ -3,8 +3,8 @@ import type { Message } from '../types/message';
 import type { ConversationSummary } from '../types/conversation';
 import { useSession } from '../contexts/SessionContext';
 import { useConversationContext } from '../contexts/ConversationContext';
-import { postMessage } from '../services/chatService';
-import { isValidMessage } from '../utils/validators';
+import { postMessage, uploadAndAsk } from '../services/chatService';
+import { isValidMessage, isAllowedFileType, isAllowedExtension, isWithinFileSizeLimit } from '../utils/validators';
 import { saveMessages, loadConversations, saveConversations } from '../services/conversationStorage';
 import { HttpError } from '../services/api';
 
@@ -13,6 +13,7 @@ interface UseChatReturn {
   isLoading: boolean;
   error: string | null;
   sendMessage: (content: string, attachmentId?: number | null) => Promise<void>;
+  sendFileMessage: (content: string, file: File) => Promise<void>;
   retry: () => Promise<void>;
   clearMessages: () => void;
 }
@@ -129,6 +130,82 @@ export function useChat(): UseChatReturn {
     [sessionId, sessionError, activeConversation, messages, addMessage, setActiveConversation, persistMessages, ensureConversationInList, updateConversationLastMessage, reinitializeSession],
   );
 
+  const sendFileMessage = useCallback(
+    async (content: string, file: File) => {
+      if (!sessionId) {
+        setError(sessionError || 'Sessão não disponível. Aguarde ou recarregue a página.');
+        return;
+      }
+
+      if (!isAllowedFileType(file.type) && !isAllowedExtension(file.name)) {
+        setError('Formato de arquivo não suportado.');
+        return;
+      }
+
+      if (!isWithinFileSizeLimit(file.size)) {
+        setError('O arquivo excede o limite de 10 MB.');
+        return;
+      }
+
+      setError(null);
+      setIsLoading(true);
+      setLastContent(content);
+      setLastAttachmentId(null);
+
+      try {
+        const response = await uploadAndAsk(
+          file,
+          sessionId,
+          activeConversation?.id ?? null,
+          content || undefined,
+        );
+
+        const backendConvId = response.conversationId;
+
+        if (!activeConversation) {
+          setActiveConversation({ id: backendConvId });
+        }
+
+        const userMsg: Message = {
+          id: Date.now(),
+          conversationId: backendConvId,
+          role: 'USER',
+          content: content || `[Arquivo: ${file.name}]`,
+          timestamp: new Date().toISOString(),
+        };
+
+        const assistantMsg: Message = {
+          id: Date.now() + 1,
+          conversationId: backendConvId,
+          role: 'ASSISTANT',
+          content: response.message,
+          timestamp: response.timestamp,
+        };
+
+        if (!activeConversation) {
+          ensureConversationInList(backendConvId, userMsg.content);
+        }
+
+        addMessage(userMsg);
+        addMessage(assistantMsg);
+        const allMsgs = [...messages, userMsg, assistantMsg];
+        persistMessages(backendConvId, allMsgs);
+        updateConversationLastMessage(backendConvId, assistantMsg.content);
+      } catch (err) {
+        if (err instanceof HttpError && err.status === 409) {
+          setError('Sessão expirada. Criando uma nova sessão...');
+          await reinitializeSession();
+          return;
+        }
+        const message = err instanceof Error ? err.message : 'Erro ao enviar arquivo';
+        setError(message);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [sessionId, sessionError, activeConversation, messages, addMessage, setActiveConversation, persistMessages, ensureConversationInList, updateConversationLastMessage, reinitializeSession],
+  );
+
   const retry = useCallback(async () => {
     if (lastContent) {
       await sendMessage(lastContent, lastAttachmentId);
@@ -145,6 +222,7 @@ export function useChat(): UseChatReturn {
     isLoading,
     error,
     sendMessage,
+    sendFileMessage,
     retry,
     clearMessages,
   };

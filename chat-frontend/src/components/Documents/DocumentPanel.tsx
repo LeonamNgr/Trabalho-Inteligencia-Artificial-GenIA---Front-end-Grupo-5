@@ -106,7 +106,7 @@ export function DocumentPanel() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".txt,.pdf,.md,.html"
+                accept=".txt,.pdf,.md,.html,.doc,.docx,.jpg,.jpeg,.png,.gif,.bmp,.tiff,.tif"
                 onChange={handleFileSelect}
                 className="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#ED1D24] file:text-white file:cursor-pointer"
               />

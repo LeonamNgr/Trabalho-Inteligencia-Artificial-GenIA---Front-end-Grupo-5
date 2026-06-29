@@ -6,7 +6,7 @@ import { Loading } from '../Common/Loading';
 import styles from './ChatWindow.module.css';
 
 export function ChatWindow() {
-  const { messages, isLoading, error, sendMessage, retry } = useChat();
+  const { messages, isLoading, error, sendMessage, sendFileMessage, retry } = useChat();
 
   return (
     <div className={styles.container}>
@@ -16,7 +16,7 @@ export function ChatWindow() {
       ) : (
         <MessageList messages={messages} isTyping={isLoading} onSendSuggestion={sendMessage} />
       )}
-      <ChatInput onSend={sendMessage} disabled={isLoading} />
+      <ChatInput onSend={sendMessage} onSendFile={sendFileMessage} disabled={isLoading} />
     </div>
   );
 }
