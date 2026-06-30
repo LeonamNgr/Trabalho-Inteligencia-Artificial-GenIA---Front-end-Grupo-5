@@ -31,20 +31,6 @@ export class HttpError extends AppError {
   }
 }
 
-export class NetworkError extends AppError {
-  constructor() {
-    super('Sem conexão com o servidor.', 'NETWORK_ERROR');
-    this.name = 'NetworkError';
-  }
-}
-
-export class ValidationError extends AppError {
-  constructor(message: string) {
-    super(message, 'VALIDATION_ERROR');
-    this.name = 'ValidationError';
-  }
-}
-
 const errorMessages: Record<number, string> = {
   400: 'Verifique os dados enviados.',
   404: 'Recurso não encontrado.',

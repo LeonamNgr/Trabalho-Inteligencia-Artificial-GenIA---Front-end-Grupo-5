@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import type { Document, DocumentIngestResponse, DocumentChunk } from '../types/document';
 import * as documentService from '../services/documentService';
-import { DOCUMENT_UPLOAD_MAX_SIZE } from '../utils/constants';
+import { DOCUMENT_UPLOAD_MAX_SIZE, ALLOWED_DOCUMENT_EXTENSIONS } from '../utils/constants';
 
 interface UseDocumentsReturn {
   documents: Document[];
@@ -17,11 +17,9 @@ interface UseDocumentsReturn {
   isIngesting: boolean;
 }
 
-const ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.md', '.html'] as const;
-
 function isAllowedDocumentExtension(fileName: string): boolean {
   const ext = '.' + fileName.split('.').pop()?.toLowerCase();
-  return (ALLOWED_EXTENSIONS as readonly string[]).includes(ext);
+  return (ALLOWED_DOCUMENT_EXTENSIONS as readonly string[]).includes(ext);
 }
 
 async function pollStatus(

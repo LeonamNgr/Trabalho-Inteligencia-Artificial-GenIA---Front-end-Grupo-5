@@ -1,6 +1,6 @@
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
-export const UPLOAD_MAX_SIZE = 10 * 1024 * 1024;
+export const UPLOAD_MAX_SIZE = 50 * 1024 * 1024;
 
 export const ALLOWED_MIME_TYPES = [
   'text/plain',
@@ -21,25 +21,42 @@ export const ALLOWED_DOCUMENT_MIME_TYPES = [
   'application/pdf',
   'text/markdown',
   'text/html',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/jpeg',
+  'image/png',
+  'image/bmp',
+  'image/tiff',
+  'image/gif',
 ] as const;
 
-export const ALLOWED_DOCUMENT_EXTENSIONS = ['.txt', '.pdf', '.md', '.html'] as const;
+export const ALLOWED_DOCUMENT_EXTENSIONS = ['.txt', '.pdf', '.md', '.html', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif', '.gif'] as const;
 
 export const MAX_MESSAGE_LENGTH = 5000;
 
 export const TIMEOUTS = {
-  MESSAGE: 60_000,
+  MESSAGE: 180_000,
   UPLOAD: 120_000,
   HISTORY: 15_000,
   HEALTH: 5_000,
   SESSION: 10_000,
+  ASYNC_START: 15_000,
+  ASYNC_POLL: 15_000,
 } as const;
 
-export const HEALTH_CHECK_INTERVAL = 30_000;
+export const HEALTH_CHECK_INTERVAL = (() => {
+  const envVal = import.meta.env.VITE_HEALTH_INTERVAL;
+  return envVal ? parseInt(envVal, 10) : 30_000;
+})();
 
 export const RETRY = {
   MAX_ATTEMPTS: 3,
   BASE_DELAY: 1000,
+} as const;
+
+export const POLLING = {
+  INTERVAL_MS: 2000,
+  MAX_TOTAL_MS: 600_000,
 } as const;
 
 export const STORAGE_KEYS = {

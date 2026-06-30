@@ -32,11 +32,6 @@ export interface DocumentChunk {
   similarityScore: number | null;
 }
 
-export interface DocumentSearchRequest {
-  query: string;
-  topK: number;
-}
-
 export interface DocumentSearchResponse {
   results: DocumentChunk[];
 }

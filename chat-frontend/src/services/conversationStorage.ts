@@ -34,8 +34,4 @@ export function saveMessages(sessionId: string, conversationId: number, messages
   } catch { /* quota exceeded etc */ }
 }
 
-export function removeConversation(sessionId: string, conversationId: number) {
-  try {
-    localStorage.removeItem(MESSAGES_KEY(sessionId, conversationId));
-  } catch { /* ignore */ }
-}
+

@@ -1,8 +1,9 @@
 import { motion } from 'motion/react';
-import { Plus, MessageSquare, Settings, Menu, X } from 'lucide-react';
+import { Plus, Settings, Menu, X } from 'lucide-react';
 import { useConversation } from '../../hooks/useConversation';
 import { useConversationContext } from '../../contexts/ConversationContext';
 import { HealthStatus } from '../Common/HealthStatus';
+import { ConversationItem } from '../History/ConversationItem';
 import { DocumentPanel } from '../Documents/DocumentPanel';
 
 interface SidebarProps {
@@ -26,35 +27,17 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
+      <div className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
         {conversations.map((chat) => (
-          <motion.div
+          <ConversationItem
             key={chat.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="group relative"
-          >
-            <button
-              onClick={() => {
-                selectConversation(chat.id);
-                onClose();
-              }}
-              className={[
-                'w-full text-left px-3 py-3 rounded-lg transition-all',
-                chat.id === activeConversation?.id
-                  ? 'bg-gradient-to-r from-[#ED1D24]/20 to-[#F0141E]/20 border border-[#ED1D24]/50'
-                  : 'hover:bg-[#0d2040] border border-transparent',
-              ].join(' ')}
-            >
-              <div className="flex items-start gap-2">
-                <MessageSquare className="w-4 h-4 mt-1 text-[#ED1D24] flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white truncate">{chat.title || 'Nova Conversa'}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{chat.lastActivity ? new Date(chat.lastActivity).toLocaleDateString('pt-BR') : ''}</p>
-                </div>
-              </div>
-            </button>
-          </motion.div>
+            conversation={chat}
+            isActive={chat.id === activeConversation?.id}
+            onSelect={() => {
+              selectConversation(chat.id);
+              onClose();
+            }}
+          />
         ))}
       </div>
 

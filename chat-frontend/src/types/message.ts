@@ -21,3 +21,20 @@ export interface ChatResponse {
   assistantMessage: Message;
   conversationId: number;
 }
+
+export interface TaskStatusResponse {
+  taskId: string;
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  result?: ChatResponse | null;
+  errorMessage?: string | null;
+  createdAt?: string | null;
+  completedAt?: string | null;
+}
+
+export interface UploadAndAskResponse {
+  userMessage: Message;
+  assistantMessage: Message;
+  conversationId: number;
+}
+
+

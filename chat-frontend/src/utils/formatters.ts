@@ -16,16 +16,6 @@ export function formatFileSize(bytes: number): string {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
-export function formatFileType(mimeType: string): string {
-  const map: Record<string, string> = {
-    'text/plain': 'TXT',
-    'application/pdf': 'PDF',
-    'text/markdown': 'MD',
-    'text/html': 'HTML',
-  };
-  return map[mimeType] ?? mimeType;
-}
-
 export function formatRelativeTime(isoString: string): string {
   const now = new Date();
   const date = new Date(isoString);
