@@ -19,6 +19,7 @@ export async function ingestDocument(
   const response = await fetch(`${API_BASE_URL}/api/documents/ingest`, {
     method: 'POST',
     body: formData,
+    signal: AbortSignal.timeout(TIMEOUTS.UPLOAD),
   });
 
   if (!response.ok) {

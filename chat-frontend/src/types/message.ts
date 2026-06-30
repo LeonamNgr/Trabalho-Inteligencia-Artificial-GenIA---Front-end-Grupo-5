@@ -22,9 +22,19 @@ export interface ChatResponse {
   conversationId: number;
 }
 
-export interface UploadAndAskResponse {
-  message: string;
-  sessionId: string;
-  conversationId: number;
-  timestamp: string;
+export interface TaskStatusResponse {
+  taskId: string;
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  result?: ChatResponse | null;
+  errorMessage?: string | null;
+  createdAt?: string | null;
+  completedAt?: string | null;
 }
+
+export interface UploadAndAskResponse {
+  userMessage: Message;
+  assistantMessage: Message;
+  conversationId: number;
+}
+
+
