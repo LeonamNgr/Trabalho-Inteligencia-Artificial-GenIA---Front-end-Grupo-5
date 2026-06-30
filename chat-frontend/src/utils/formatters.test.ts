@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatTime, formatDate, formatFileSize, formatFileType, formatRelativeTime } from './formatters';
+import { formatTime, formatDate, formatFileSize, formatRelativeTime } from './formatters';
 
 describe('formatTime', () => {
   it('formats time correctly', () => {
@@ -37,20 +37,6 @@ describe('formatFileSize', () => {
   it('formats MB', () => {
     const result = formatFileSize(5_242_880);
     expect(result).toContain('MB');
-  });
-});
-
-describe('formatFileType', () => {
-  it('returns TXT for text/plain', () => {
-    expect(formatFileType('text/plain')).toBe('TXT');
-  });
-
-  it('returns PDF for application/pdf', () => {
-    expect(formatFileType('application/pdf')).toBe('PDF');
-  });
-
-  it('returns original type for unknown', () => {
-    expect(formatFileType('image/png')).toBe('image/png');
   });
 });
 

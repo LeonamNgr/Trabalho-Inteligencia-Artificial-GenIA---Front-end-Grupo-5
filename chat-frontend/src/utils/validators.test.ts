@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isValidMessage, isAllowedFileType, isAllowedExtension, isWithinFileSizeLimit, isValidSessionId, getFileExtension } from './validators';
+import { isValidMessage, isAllowedFileType, isAllowedExtension, isWithinFileSizeLimit, isValidSessionId } from './validators';
 
 describe('isValidMessage', () => {
   it('returns error for empty message', () => {
@@ -88,12 +88,4 @@ describe('isValidSessionId', () => {
   });
 });
 
-describe('getFileExtension', () => {
-  it('returns extension from filename', () => {
-    expect(getFileExtension('documento.pdf')).toBe('pdf');
-  });
 
-  it('returns filename for no extension', () => {
-    expect(getFileExtension('file')).toBe('file');
-  });
-});

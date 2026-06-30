@@ -33,31 +33,6 @@ body {
   background: #aabbdd;
 }
 
-/* --- Marvel Background (imagem com overlay escuro) --- */
-.marvel-bg {
-  position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.marvel-bg::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url('/Marvel_Background.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  opacity: 0.045;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.marvel-bg > * {
-  position: relative;
-  z-index: 1;
-}
-
 /* --- Animação do título "MARVEL" --- */
 @keyframes marvel-pulse {
   0%, 100% { transform: scale(1); }

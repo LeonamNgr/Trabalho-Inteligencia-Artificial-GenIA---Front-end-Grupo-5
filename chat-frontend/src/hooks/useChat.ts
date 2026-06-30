@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { Message } from '../types/message';
 import type { ConversationSummary } from '../types/conversation';
 import { useSession } from '../contexts/SessionContext';
@@ -30,8 +30,9 @@ export function useChat(): UseChatReturn {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastContent, setLastContent] = useState<string>('');
-  const [lastAttachmentId, setLastAttachmentId] = useState<number | null>(null);
+  const lastContentRef = useRef('');
+  const lastAttachmentIdRef = useRef<number | null>(null);
+  const lastFileRef = useRef<File | null>(null);
 
   const persistMessages = useCallback(
     (convId: number, msgs: Message[]) => {
@@ -92,8 +93,9 @@ export function useChat(): UseChatReturn {
 
       setError(null);
       setIsLoading(true);
-      setLastContent(content);
-      setLastAttachmentId(attachmentId ?? null);
+      lastContentRef.current = content;
+      lastAttachmentIdRef.current = attachmentId ?? null;
+      lastFileRef.current = null;
 
       try {
         const response = await postMessage({
@@ -149,8 +151,9 @@ export function useChat(): UseChatReturn {
 
       setError(null);
       setIsLoading(true);
-      setLastContent(content);
-      setLastAttachmentId(null);
+      lastContentRef.current = content;
+      lastAttachmentIdRef.current = null;
+      lastFileRef.current = file;
 
       try {
         const response = await uploadAndAsk(
@@ -207,10 +210,14 @@ export function useChat(): UseChatReturn {
   );
 
   const retry = useCallback(async () => {
-    if (lastContent) {
-      await sendMessage(lastContent, lastAttachmentId);
+    const file = lastFileRef.current;
+    const content = lastContentRef.current;
+    if (file) {
+      await sendFileMessage(content, file);
+    } else if (content) {
+      await sendMessage(content, lastAttachmentIdRef.current);
     }
-  }, [lastContent, lastAttachmentId, sendMessage]);
+  }, [sendMessage, sendFileMessage]);
 
   const clearMessages = useCallback(() => {
     setError(null);

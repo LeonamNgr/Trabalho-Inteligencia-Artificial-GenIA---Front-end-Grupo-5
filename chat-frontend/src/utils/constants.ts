@@ -35,14 +35,17 @@ export const ALLOWED_DOCUMENT_EXTENSIONS = ['.txt', '.pdf', '.md', '.html', '.do
 export const MAX_MESSAGE_LENGTH = 5000;
 
 export const TIMEOUTS = {
-  MESSAGE: 60_000,
+  MESSAGE: 180_000,
   UPLOAD: 120_000,
   HISTORY: 15_000,
   HEALTH: 5_000,
   SESSION: 10_000,
 } as const;
 
-export const HEALTH_CHECK_INTERVAL = 30_000;
+export const HEALTH_CHECK_INTERVAL = (() => {
+  const envVal = import.meta.env.VITE_HEALTH_INTERVAL;
+  return envVal ? parseInt(envVal, 10) : 30_000;
+})();
 
 export const RETRY = {
   MAX_ATTEMPTS: 3,
