@@ -61,4 +61,5 @@ export const POLLING = {
 
 export const STORAGE_KEYS = {
   SESSION_ID: 'sessionId',
+  ACTIVE_CONVERSATION: 'activeConversation',
 } as const;

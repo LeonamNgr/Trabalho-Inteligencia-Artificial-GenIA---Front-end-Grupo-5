@@ -77,7 +77,7 @@ describe('useConversation', () => {
   });
 
   it('selects conversation on selectConversation', async () => {
-    mockGetConversation.mockResolvedValue({ id: 1, messages: [] });
+    mockGetConversation.mockResolvedValue({ id: 1, messages: [{ id: 1, conversationId: 1, role: 'USER', content: 'Oi', timestamp: new Date().toISOString() }] });
 
     const { result } = renderHook(() => useConversation(), { wrapper: createWrapper() });
 

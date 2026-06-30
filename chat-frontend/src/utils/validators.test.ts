@@ -74,7 +74,7 @@ describe('isWithinFileSizeLimit', () => {
   });
 
   it('rejects file over limit', () => {
-    expect(isWithinFileSizeLimit(11 * 1024 * 1024)).toBe(false);
+    expect(isWithinFileSizeLimit(51 * 1024 * 1024)).toBe(false);
   });
 });
 

@@ -1,6 +1,14 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { Message } from '../types/message';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react';
 import type { Conversation } from '../types/conversation';
+import type { Message } from '../types/message';
+import { STORAGE_KEYS } from '../utils/constants';
 
 interface ConversationContextType {
   activeConversation: Conversation | null;
@@ -15,9 +23,52 @@ interface ConversationContextType {
 export const ConversationContext = createContext<ConversationContextType | null>(null);
 
 export function ConversationProvider({ children }: { children: ReactNode }) {
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [activeConversation, setActiveConversationState] =
+    useState<Conversation | null>(null);
 
+  const setActiveConversation = useCallback(
+    (conversation: Conversation | null) => {
+
+      setActiveConversationState(conversation);
+
+      if (conversation) {
+        localStorage.setItem(
+          STORAGE_KEYS.ACTIVE_CONVERSATION,
+          JSON.stringify(conversation),
+        );
+      } else {
+        localStorage.removeItem(
+          STORAGE_KEYS.ACTIVE_CONVERSATION,
+        );
+      }
+
+    },
+    [],
+  );
+  const [messages, setMessages] = useState<Message[]>([]);
+  useEffect(() => {
+
+    const stored =
+      localStorage.getItem(STORAGE_KEYS.ACTIVE_CONVERSATION);
+
+    if (!stored) return;
+
+    try {
+
+      const conversation: Conversation =
+        JSON.parse(stored);
+
+      setActiveConversationState(conversation);
+
+    } catch {
+
+      localStorage.removeItem(
+        STORAGE_KEYS.ACTIVE_CONVERSATION,
+      );
+
+    }
+
+  }, []);
   const addMessage = useCallback((message: Message) => {
     setMessages((prev) => [...prev, message]);
   }, []);
@@ -29,9 +80,12 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const clearMessages = useCallback(() => {
+
     setMessages([]);
+
     setActiveConversation(null);
-  }, []);
+
+  }, [setActiveConversation]);
 
   return (
     <ConversationContext.Provider

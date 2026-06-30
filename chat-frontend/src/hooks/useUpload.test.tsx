@@ -72,7 +72,7 @@ describe('useUpload', () => {
     const { result } = renderHook(() => useUpload(), { wrapper: createWrapper() });
 
     await act(async () => {
-      await result.current.uploadFile(createFile({ size: 15 * 1024 * 1024 }));
+      await result.current.uploadFile(createFile({ size: 51 * 1024 * 1024 }));
     });
 
     expect(result.current.error).not.toBeNull();
