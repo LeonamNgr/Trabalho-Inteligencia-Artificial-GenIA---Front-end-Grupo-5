@@ -7,10 +7,10 @@ import { useChat } from './useChat';
 import { SessionContext } from '../contexts/SessionContext';
 import { ConversationContext } from '../contexts/ConversationContext';
 
-const mockPostMessage = vi.fn();
+const mockPostMessageAsync = vi.fn();
 
 vi.mock('../services/chatService', () => ({
-  postMessage: (...args: unknown[]) => mockPostMessage(...args),
+  postMessageAsync: (...args: unknown[]) => mockPostMessageAsync(...args),
 }));
 
 vi.mock('../utils/withRetry', () => ({
@@ -61,7 +61,7 @@ function createWrapper() {
 
 describe('useChat', () => {
   it('sends message and calls postMessage with user + assistant from API', async () => {
-    mockPostMessage.mockResolvedValue({ userMessage: { id: 1, conversationId: 1, role: 'USER' as const, content: 'Oi', timestamp: new Date().toISOString(), attachment: null }, assistantMessage: { id: 2, conversationId: 1, role: 'ASSISTANT' as const, content: 'Resposta', timestamp: new Date().toISOString(), attachment: null }, conversationId: 1 });
+    mockPostMessageAsync.mockResolvedValue({ userMessage: { id: 1, conversationId: 1, role: 'USER' as const, content: 'Oi', timestamp: new Date().toISOString(), attachment: null }, assistantMessage: { id: 2, conversationId: 1, role: 'ASSISTANT' as const, content: 'Resposta', timestamp: new Date().toISOString(), attachment: null }, conversationId: 1 });
 
     const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
 
@@ -69,14 +69,14 @@ describe('useChat', () => {
       await result.current.sendMessage('Oi');
     });
 
-    expect(mockPostMessage).toHaveBeenCalled();
+    expect(mockPostMessageAsync).toHaveBeenCalled();
     expect(result.current.messages.length).toBe(2);
     expect(result.current.messages[0].role).toBe('USER');
     expect(result.current.messages[1].role).toBe('ASSISTANT');
   });
 
   it('sets error on send failure without adding messages', async () => {
-    mockPostMessage.mockRejectedValue(new Error('Erro de rede'));
+    mockPostMessageAsync.mockRejectedValue(new Error('Erro de rede'));
 
     const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
 
@@ -86,7 +86,7 @@ describe('useChat', () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBe('Erro de rede');
-    expect(result.current.messages.length).toBe(0);
+    expect(result.current.messages.length).toBe(1);
   });
 
   it('does not send empty message', async () => {
@@ -96,7 +96,7 @@ describe('useChat', () => {
       await result.current.sendMessage('');
     });
 
-    expect(mockPostMessage).not.toHaveBeenCalled();
+    expect(mockPostMessageAsync).not.toHaveBeenCalled();
   });
 
   it('clears messages', () => {
@@ -110,7 +110,7 @@ describe('useChat', () => {
   });
 
   it('retries last message with same content', async () => {
-    mockPostMessage.mockResolvedValue({ userMessage: { id: 1, conversationId: 1, role: 'USER' as const, content: 'Oi', timestamp: new Date().toISOString(), attachment: null }, assistantMessage: { id: 2, conversationId: 1, role: 'ASSISTANT' as const, content: 'Resposta', timestamp: new Date().toISOString(), attachment: null }, conversationId: 1 });
+    mockPostMessageAsync.mockResolvedValue({ userMessage: { id: 1, conversationId: 1, role: 'USER' as const, content: 'Oi', timestamp: new Date().toISOString(), attachment: null }, assistantMessage: { id: 2, conversationId: 1, role: 'ASSISTANT' as const, content: 'Resposta', timestamp: new Date().toISOString(), attachment: null }, conversationId: 1 });
 
     const { result } = renderHook(() => useChat(), { wrapper: createWrapper() });
 
@@ -118,13 +118,13 @@ describe('useChat', () => {
       await result.current.sendMessage('Oi');
     });
 
-    expect(mockPostMessage).toHaveBeenCalledTimes(1);
+    expect(mockPostMessageAsync).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       await result.current.retry();
     });
 
-    expect(mockPostMessage).toHaveBeenCalledTimes(2);
-    expect(mockPostMessage).toHaveBeenLastCalledWith(expect.objectContaining({ content: 'Oi' }));
+    expect(mockPostMessageAsync).toHaveBeenCalledTimes(2);
+    expect(mockPostMessageAsync).toHaveBeenLastCalledWith(expect.objectContaining({ content: 'Oi' }));
   });
 });

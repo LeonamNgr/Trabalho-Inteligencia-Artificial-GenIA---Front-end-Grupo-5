@@ -1,4 +1,3 @@
-import { useConversationContext } from '../../contexts/ConversationContext';
 import { useChat } from '../../hooks/useChat';
 import { ErrorMessage } from '../Common/ErrorMessage';
 import { Loading } from '../Common/Loading';
@@ -15,8 +14,6 @@ export function ChatWindow() {
     sendFileMessage,
     retry,
   } = useChat();
-
-  const { activeConversation } = useConversationContext();
 
   return (
     <div className={styles.container}>
