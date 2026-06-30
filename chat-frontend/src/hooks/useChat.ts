@@ -141,7 +141,7 @@ export function useChat(): UseChatReturn {
         };
         addMessage(assistantMsg);
 
-        const allMsgs = [response.userMessage, assistantMsg];
+        const allMsgs = [...messages, response.userMessage, assistantMsg];
         persistMessages(backendConvId, allMsgs);
         updateConversationLastMessage(backendConvId, assistantMsg.content);
       } catch (err) {
